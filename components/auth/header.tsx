@@ -1,19 +1,11 @@
-import { Poppins } from "next/font/google";
-
-import { cn } from "@/lib/utils";
-
-const fonts = Poppins({
-  subsets: ["latin"],
-  weight: ["600"],
-});
-
+/* eslint-disable @next/next/no-img-element */
 interface HeaderProps {
   label: string;
 }
 export const Header = ({ label }: HeaderProps) => {
   return (
     <div className="w-full flex flex-col gap-y-4 items-center justify-center">
-      <h1 className={cn("text-3xl font-semibold", fonts.className)}>AUTH</h1>
+      <img src="/logo-text.png" alt="logo-text" className="w-40" />
       <p className="text-muted-foreground text-sm">{label}</p>
     </div>
   );
