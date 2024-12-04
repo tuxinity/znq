@@ -32,3 +32,20 @@ export const RegisterSchema = z.object({
     message: "Name is required",
   }),
 });
+
+export const BuySchema = z.object({
+  amount: z.number().positive({
+    message: "Amount must be a positive number",
+  }).min(10, {
+    message: "Minimum purchase amount is $10",
+  }),
+  valueToken: z.number().positive({
+    message: "Token value must be a positive number",
+  }),
+  paymentMethod: z.enum(["USDT.BEP20", "USDT.TRC20", "BNB"], {
+    message: "Invalid payment method",
+  }),
+  email: z.string().email({
+    message: "Valid email is required",
+  }).optional(),
+});

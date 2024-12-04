@@ -19,14 +19,15 @@ enum UserRole {
 }
 
 model User {
-  id            String    @id @default(cuid())
+  id            String          @id @default(cuid())
   name          String?
-  email         String?   @unique
-  emailVerified DateTime? @map("email_verified")
+  email         String?         @unique
+  emailVerified DateTime?       @map("email_verified")
   password      String?
   image         String?
-  role          UserRole  @default(USER)
+  role          UserRole        @default(USER)
   accounts      Account[]
+  Transaction   Transaction[]
  
   @@map("users")
 }
@@ -67,4 +68,18 @@ model PasswordResetToken {
   expires DateTime
 
   @@unique([email,token])
+}
+
+model Transaction {
+  id                  String  @id @default(cuid())
+  userId              String
+  txnId               String
+  value               Int
+  valueToken          Float
+  type                String
+  status              String
+  reference           String
+  createdAt           DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id])
 }

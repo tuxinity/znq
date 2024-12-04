@@ -1,13 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { Home, BarChart2, Users, Settings } from "lucide-react";
+import { Home } from "lucide-react";
 
 const navItems = [
   { name: "Dashboard", href: "/dashboard", icon: Home },
-  { name: "Analytics", href: "/dashboard/analytics", icon: BarChart2 },
-  { name: "Customers", href: "/dashboard/customers", icon: Users },
-  { name: "Settings", href: "/dashboard/settings", icon: Settings },
 ];
 
 export function DashboardSidebar() {
