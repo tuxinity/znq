@@ -30,8 +30,6 @@ export const TableAdminWithdraw = () => {
     const { withdrawals, withdraw, fetchById } = useTransactions();
     const [modalOpen, setModalOpen] = useState<boolean>(false);
 
-    console.log("withdraw", withdraw)
-
   const handleOpenTransaction = async (id: string) => {
     await fetchById(id);
     setModalOpen(true);
@@ -71,10 +69,11 @@ export const TableAdminWithdraw = () => {
       header: () => <div className="text-center">ZENQ Asset</div>,
     }),
     columnHelper.accessor("status", {
-      cell: info => {
-        const txn = info.row.original.txHash;
-        return <TransactionStatusCell txnId={txn} />;
-      },
+      cell: info => (
+        <div className="min-w-[13rem] font-bold text-md capitalize text-center">
+          {info.getValue()}
+        </div>
+      ),
       header: () => <div className="text-center">Status</div>,
     }),
     columnHelper.accessor("reference", {
@@ -133,9 +132,7 @@ export const TableAdminWithdraw = () => {
     <div className="p-5 space-y-4">
         <div className="flex flex-row gap-5 justify-end ps-1.5 my-4">
       <div className="relative sm:block">
-        {/* Icon */}
         <Search className="absolute top-5 -translate-y-1/2 start-3 text-black dark:text-white" />
-        {/* Input Field */}
         <Input
           type="text"
           id="searchItem"

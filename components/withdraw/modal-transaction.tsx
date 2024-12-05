@@ -55,6 +55,7 @@ export const ModalWithdraw = ({ onClose, transaction }: ModalProps) => {
                 type="text"
                 id="id"
                 value={transaction.id}
+                readOnly
                 className="form-input min-w-full w-56 px-3 h-8 bg-transparent dark:bg-slate-900 dark:text-slate-200 rounded-md outline-none border border-gray-100 dark:border-gray-800 focus:ring-0 bg-white text-black shadow-md"
               />
             </div>
