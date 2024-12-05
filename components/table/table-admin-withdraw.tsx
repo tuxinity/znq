@@ -8,20 +8,32 @@ import Table from "../ui/table";
 import { Badge } from "../ui/badge";
 import Pagination from "../pagination";
 import { usePaymentStatus } from "@/hooks/usePaymentStatus";
-import { useTransactions } from "@/hooks/useTransactions";
+import { TransactionProvider, useTransactions } from "@/context/TransactionContext";
+import { ModalWithdraw } from "../withdraw/modal-transaction";
+import { Input } from "../ui";
+import { Search } from "lucide-react";
 
 export interface IUserTransaction {
-  txnId: string;
+  id: string;
+  txHash: string;
+  email: string;
   transactionDate: string;
   amount: number;
   status: string;
   reference: string;
+  action: () => void;
 }
 
 const columnHelper = createColumnHelper<IUserTransaction>();
 
-export const TableUser = () => {
-  const { transactions } = useTransactions();
+export const TableAdminWithdraw = () => {
+    const { withdrawals, withdraw, fetchById } = useTransactions();
+    const [modalOpen, setModalOpen] = useState<boolean>(false);
+
+  const handleOpenTransaction = async (id: string) => {
+    await fetchById(id);
+    setModalOpen(true);
+  };
 
   const columns = useMemo(() => [
     columnHelper.accessor("transactionDate", {
@@ -32,13 +44,21 @@ export const TableUser = () => {
       ),
       header: () => <div>Date</div>,
     }),
-    columnHelper.accessor("txnId", {
+    columnHelper.accessor("email", {
+        cell: info => (
+          <div className="min-w-[5rem] font-bold text-sm capitalize text-center">
+            {info.getValue()}
+          </div>
+        ),
+        header: () => <div>user</div>,
+      }),
+    columnHelper.accessor("txHash", {
       cell: info => (
         <div className="min-w-[13rem] font-bold text-md capitalize text-center">
           {info.getValue()}
         </div>
       ),
-      header: () => <div className="text-center">txnId</div>,
+      header: () => <div className="text-center">txHash</div>,
     }),
     columnHelper.accessor("amount", {
       cell: info => (
@@ -49,10 +69,11 @@ export const TableUser = () => {
       header: () => <div className="text-center">ZENQ Asset</div>,
     }),
     columnHelper.accessor("status", {
-      cell: info => {
-        const txnId = info.row.original.txnId;
-        return <TransactionStatusCell txnId={txnId} />;
-      },
+      cell: info => (
+        <div className="min-w-[13rem] font-bold text-md capitalize text-center">
+          {info.getValue()}
+        </div>
+      ),
       header: () => <div className="text-center">Status</div>,
     }),
     columnHelper.accessor("reference", {
@@ -65,19 +86,35 @@ export const TableUser = () => {
       ),
       header: () => <div className="text-center">Reference</div>,
     }),
+    columnHelper.accessor("action", {
+        cell: (info) => {
+          const rowId = info.row.original.id;
+          return (
+            <button
+              onClick={() => handleOpenTransaction(rowId as string)}
+              className="focus:outline-none text-white bg-purple-700 hover:bg-purple-800 focus:ring-4 focus:ring-purple-300 font-medium rounded-lg text-sm px-5 py-2.5 mb-2 dark:bg-purple-600 dark:hover:bg-purple-700 dark:focus:ring-purple-900"
+            >
+              Withdraw
+            </button>
+          );
+        },
+        header: () => <div className="text-center">Action</div>,
+      }),
   ], []);
 
   const DataTableTransaction = useMemo(() => {
-    if (!transactions) return [];
+    if (!withdrawals) return [];
 
-    return transactions.map((item) => ({
-      txnId: item.txnId || "",
-      amount: item.valueToken || 0,
+    return withdrawals.map((item) => ({
+      txHash: item.txHash || "",
+      id: item.id || "",
+      email: item.user.email || "",
+      amount: item.value || 0,
       status: item.status || '',
       reference: item.reference || '',
       transactionDate: new Date(item.createdAt).toLocaleDateString() || "",
     }));
-  }, [transactions]);
+  }, [withdrawals]);
 
   const itemsPerPage = 10;
   const [currentPage, setCurrentPage] = useState(1);
@@ -93,6 +130,18 @@ export const TableUser = () => {
 
   return (
     <div className="p-5 space-y-4">
+        <div className="flex flex-row gap-5 justify-end ps-1.5 my-4">
+      <div className="relative sm:block">
+        <Search className="absolute top-5 -translate-y-1/2 start-3 text-black dark:text-white" />
+        <Input
+          type="text"
+          id="searchItem"
+          name="search"
+          placeholder="Search..."
+          className="min-h-10 w-56 ps-9 px-3 h-8 bg-transparent dark:bg-slate-900 dark:text-slate-200 rounded-md outline-none border border-gray-100 dark:border-gray-800 focus:ring-0 bg-white text-black shadow-md"
+        />
+      </div>
+    </div>
       <div>
         <Table
           data={currentItems}
@@ -107,6 +156,9 @@ export const TableUser = () => {
           onPageChange={handlePageClick}
           colorScheme="green"
         />
+      )}
+      {modalOpen && withdraw && (
+        <ModalWithdraw onClose={() => setModalOpen(false)} transaction={withdraw} />
       )}
     </div>
   );
@@ -135,4 +187,12 @@ const TransactionStatusCell = ({ txnId }: { txnId: string }) => {
     </div>
   );
 };
+
+export default function AdminWithdrawPage() {
+    return (
+      <TransactionProvider>
+        <TableAdminWithdraw />
+      </TransactionProvider>
+    );
+  }
 

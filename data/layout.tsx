@@ -1,4 +1,3 @@
-import { TransactionProvider } from "@/context/TransactionContext";
 import "./globals.css";
 import type { Metadata } from "next";
 import { SessionProvider } from "next-auth/react";
@@ -31,9 +30,7 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <SessionProvider>
-          <TransactionProvider>
-            {children}
-          </TransactionProvider>
+          {children}
         </SessionProvider>
       </body>
     </html>

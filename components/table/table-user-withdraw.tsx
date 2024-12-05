@@ -8,7 +8,7 @@ import Table from "../ui/table";
 import { Badge } from "../ui/badge";
 import Pagination from "../pagination";
 import { usePaymentStatus } from "@/hooks/usePaymentStatus";
-import { useTransactions } from "@/hooks/useTransactions";
+import { TransactionProvider, useTransactions } from "@/context/TransactionContext";
 
 export interface IUserTransaction {
   txnId: string;
@@ -20,8 +20,8 @@ export interface IUserTransaction {
 
 const columnHelper = createColumnHelper<IUserTransaction>();
 
-export const TableUser = () => {
-  const { transactions } = useTransactions();
+export const TableUserWithdraw = () => {
+  const { withdrawals } = useTransactions();
 
   const columns = useMemo(() => [
     columnHelper.accessor("transactionDate", {
@@ -68,16 +68,16 @@ export const TableUser = () => {
   ], []);
 
   const DataTableTransaction = useMemo(() => {
-    if (!transactions) return [];
+    if (!withdrawals) return [];
 
-    return transactions.map((item) => ({
+    return withdrawals.map((item) => ({
       txnId: item.txnId || "",
-      amount: item.valueToken || 0,
+      amount: item.value || 0,
       status: item.status || '',
       reference: item.reference || '',
       transactionDate: new Date(item.createdAt).toLocaleDateString() || "",
     }));
-  }, [transactions]);
+  }, [withdrawals]);
 
   const itemsPerPage = 10;
   const [currentPage, setCurrentPage] = useState(1);
@@ -135,4 +135,12 @@ const TransactionStatusCell = ({ txnId }: { txnId: string }) => {
     </div>
   );
 };
+
+export default function AdminWithdrawPage() {
+    return (
+      <TransactionProvider>
+        <TableUserWithdraw />
+      </TransactionProvider>
+    );
+  }
 
