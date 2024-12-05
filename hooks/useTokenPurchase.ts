@@ -1,10 +1,8 @@
 import { useState, useEffect } from "react";
 
 interface TransactionStatusHook {
-  tokenPriceUSD: number | null;
-  tokenPriceBNB: number | null;
-  prevPriceUSD: number | null;
-  prevPriceBNB: number | null;
+  tokenPrice: number | null;
+  prevPrice: number | null;
   isLoading: boolean;
   error: string | null;
   buyError: string | null;
@@ -12,10 +10,8 @@ interface TransactionStatusHook {
 }
 
 export const useTokenPurchase = (): TransactionStatusHook => {
-  const [tokenPriceUSD, setTokenPriceUSD] = useState<number | null>(null);
-  const [prevPriceUSD, setPrevPriceUSD] = useState<number | null>(null);
-  const [tokenPriceBNB, setTokenPriceBNB] = useState<number | null>(null);
-  const [prevPriceBNB, setPrevPriceBNB] = useState<number | null>(null);
+  const [tokenPrice, setTokenPrice] = useState<number | null>(null);
+  const [prevPrice, setPrevPrice] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [buyError, setBuyError] = useState<string | null>(null);
@@ -24,25 +20,19 @@ export const useTokenPurchase = (): TransactionStatusHook => {
     const fetchTokenPrice = async () => {
       try {
         const responseUSD = await fetch("/api/usd");
-        const responseBNB = await fetch("/api/bnb");
 
-        if (!responseUSD.ok || !responseBNB.ok) {
+        if (!responseUSD.ok) {
           throw new Error("Failed to fetch token prices");
         }
 
-        const dataUSD = await responseUSD.json();
-        const dataBNB = await responseBNB.json();
+        const data = await responseUSD.json();
 
-        if (dataUSD.stats && dataUSD.stats.length > 0 && dataBNB.stats && dataBNB.stats.length > 0) {
-          const currentPriceUSD = dataUSD.stats[dataUSD.stats.length - 1][1];
-          const previousPriceUSD = dataUSD.stats[dataUSD.stats.length - 2][1];
-          const currentPriceBNB = dataBNB.stats[dataBNB.stats.length - 1][1];
-          const previousPriceBNB = dataBNB.stats[dataBNB.stats.length - 2][1];
+        if (data.stats && data.stats.length > 0) {
+          const currentPrice = data.stats[data.stats.length - 1][1];
+          const previousPrice = data.stats[data.stats.length - 2][1];
 
-          setTokenPriceUSD(currentPriceUSD);
-          setPrevPriceUSD(previousPriceUSD);
-          setTokenPriceBNB(currentPriceBNB);
-          setPrevPriceBNB(previousPriceBNB);
+          setTokenPrice(currentPrice);
+          setPrevPrice(previousPrice);
         }
       } catch (err) {
         setError(
@@ -61,17 +51,14 @@ export const useTokenPurchase = (): TransactionStatusHook => {
   }, []);
 
   const handleBuy = async (amount: number, paymentMethod: string) => {
-    if (!amount || amount <= 0 || !tokenPriceUSD || !tokenPriceBNB) return;
+    if (!amount || amount <= 0 || !tokenPrice) return;
 
     if (amount < 0.2 && paymentMethod !== "BNB") {
       setBuyError("The amount must be at least 0.2 USDT.");
       return;
     }
 
-    const valueToken =
-      paymentMethod === "BNB"
-        ? Number((Number(amount) / tokenPriceBNB!).toFixed(6)) // Use BNB token price
-        : Number((Number(amount) / tokenPriceUSD!).toFixed(6)); // Use USD token price
+    const valueToken = Number((Number(amount) / tokenPrice).toFixed(6))
 
     try {
       const response = await fetch("/api/coinpayment", {
@@ -101,10 +88,8 @@ export const useTokenPurchase = (): TransactionStatusHook => {
   };
 
   return {
-    tokenPriceUSD,
-    prevPriceUSD,
-    tokenPriceBNB,
-    prevPriceBNB,
+    tokenPrice,
+    prevPrice,
     isLoading,
     error,
     buyError,

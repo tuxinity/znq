@@ -2,11 +2,12 @@
 
 import Image from "next/image";
 import { useState } from "react";
-import { useTokenPurchase } from "@/hooks/useTokenPurchase";
+import { SiBinance } from "react-icons/si";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { useBalances } from "@/hooks/useBalance";
+import { useTokenPurchase } from "@/hooks/useTokenPurchase";
 import { ArrowUpCircle, ArrowDownCircle, DollarSign } from "lucide-react";
-import { SiBinance } from "react-icons/si";
 import {
   Card,
   CardContent,
@@ -26,17 +27,18 @@ import {
 
 export function BalanceInfo() {
   const [amount, setAmount] = useState("");
-  const [paymentMethod, setPaymentMethod] = useState("USDT.BEP20"); // State for payment method
-  const { tokenPriceUSD, handleBuy, error, prevPriceUSD, isLoading, buyError, tokenPriceBNB } = useTokenPurchase();
+  const { isLoading: balancesLoading, balances } = useBalances()
+  const [paymentMethod, setPaymentMethod] = useState("USDT.BEP20");
+  const { tokenPrice, handleBuy, error, prevPrice, isLoading, buyError } = useTokenPurchase();
 
-  const priceChange = tokenPriceUSD !== null && prevPriceUSD !== null ? tokenPriceUSD - prevPriceUSD : null;
+  const priceChange = tokenPrice !== null && prevPrice !== null ? tokenPrice - prevPrice : null;
   const priceChangePercentage =
-    priceChange !== null && prevPriceUSD !== null ? (priceChange / prevPriceUSD) * 100 : null;
+    priceChange !== null && prevPrice !== null ? (priceChange / prevPrice) * 100 : null;
 
   const formatPrice = (price: number | null) => {
-    if (price === null) return "$-.--";
+    if (price === null) return "-.--";
     return new Intl.NumberFormat("en-US", {
-      style: "currency",
+      style: "decimal",
       currency: "USD",
       minimumFractionDigits: 2,
       maximumFractionDigits: 6,
@@ -44,18 +46,12 @@ export function BalanceInfo() {
   };
 
   const calculateTokenAmount = () => {
-    if (!amount || !tokenPriceUSD) return "0";
-
-    if (paymentMethod === "BNB") {
-
-      return (Number(amount) / (tokenPriceBNB ?? 0)).toFixed(6);
-    }
-
-    return (Number(amount) / tokenPriceUSD).toFixed(6);
+    if (!amount || !tokenPrice) return "0";
+    return (Number(amount) / tokenPrice).toFixed(6);
   };
 
   return (
-    <div className="container mx-auto p-4 sm:p-6 md:p-8 mt-4 sm:mt-6 md:mt-10">
+    <div className="mx-auto p-4 sm:p-6 md:p-5 mt-4 sm:mt-6 md:mt-10">
       <div className="grid gap-4 sm:gap-5 md:gap-6 grid-cols-1 md:grid-cols-3">
         <Card className="bg-slate-800 text-white border-gray-700 w-full">
           <CardHeader>
@@ -77,7 +73,7 @@ export function BalanceInfo() {
                       className={`text-2xl sm:text-3xl font-bold ${priceChange! >= 0 ? "text-green-500" : "text-red-500"
                         }`}
                     >
-                      {formatPrice(tokenPriceUSD)}
+                      {formatPrice(tokenPrice)}
                     </p>
                     <p className="text-xs sm:text-sm text-muted-foreground">ZENQ Token Price</p>
                   </div>
@@ -111,7 +107,10 @@ export function BalanceInfo() {
                 />
               </div>
               <div>
-                <p className="text-xl sm:text-2xl font-bold">{formatPrice(12345678)}</p>
+                {
+                  balancesLoading ? (<p className="text-xs sm:text-sm text-muted-foreground">Loading balances...</p>) : (<p className="text-xl sm:text-2xl font-bold">{formatPrice(balances?.totalValueToken ?? 0)}</p>)
+                }
+
                 <p className="text-xs sm:text-sm text-muted-foreground">ZENQ Balance</p>
               </div>
             </div>
@@ -149,7 +148,7 @@ export function BalanceInfo() {
                 }
               </div>
               {buyError && <p className="text-xs sm:text-sm text-destructive">{buyError}</p>}
-              {tokenPriceUSD && amount && (
+              {tokenPrice && amount && (
                 <p className="text-xs sm:text-sm text-muted-foreground text-white">
                   ≈ {calculateTokenAmount()} ZENQ
                 </p>
@@ -165,7 +164,6 @@ export function BalanceInfo() {
                 <SelectGroup>
                   <SelectItem value="USDT.BEP20">USDT.BEP20</SelectItem>
                   <SelectItem value="USDT.TRC20">USDT.TRC20</SelectItem>
-                  <SelectItem value="BNB">BNB</SelectItem>
                 </SelectGroup>
               </SelectContent>
             </Select>
@@ -184,3 +182,5 @@ export function BalanceInfo() {
 }
 
 export default BalanceInfo;
+
+
