@@ -1,122 +1,92 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from 'react';
+import { useSession } from 'next-auth/react';
 
-interface Transaction {
+export interface Transaction {
   id: string;
   txnId: string;
-  userId: string;
   value: number;
   valueToken: number;
   type: string;
   status: string;
   reference: string;
-  createdAt: number;
-  user: {
+  createdAt: Date;
+  user?: {
     email: string;
   };
 }
 
-interface UseTransactionsResult {
-  transactions: Transaction[] | null;
-  transaction: Transaction | null;
-  loading: boolean;
-  error: string | null;
-  fetchById: (id: string) => Promise<void>;
-  refetch: () => Promise<void>;
-  currentPage: number;
+interface UseTransactionsHook {
+  transactions: Transaction[];
+  isLoading: boolean;
+  error: Error | null;
   totalPages: number;
-  setPage: (page: number) => void;
+  currentPage: number;
+  refetch: (page?: number) => void;
 }
 
-export const useTransactions = (): UseTransactionsResult => {
-  const [transactions, setTransactions] = useState<Transaction[] | null>(null);
-  const [transaction, setTransaction] = useState<Transaction | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
-  const [currentPage, setCurrentPage] = useState<number>(1);
-  const [totalPages, setTotalPages] = useState<number>(1);
+export const useTransactions = (
+  initialPage: number = 1,
+  pageLimit: number = 10
+): UseTransactionsHook => {
+  const { data: session } = useSession();
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [error, setError] = useState<Error | null>(null);
+  const [page, setPage] = useState<number>(initialPage);
+  const [totalPages, setTotalPages] = useState<number>(0);
+  const [currentPage, setCurrentPage] = useState<number>(initialPage);
 
-  const fetchTransactions = useCallback(async () => {
-    setLoading(true);
-    setError(null);
+  const fetchTransactions = async (pageToFetch: number = page) => {
+    if (!session?.user) {
+      setError(new Error('No authenticated user'));
+      setIsLoading(false);
+      return;
+    }
 
     try {
-      const response = await fetch(
-        `/api/token-crypt/transaction?page=${currentPage}&limit=5`,
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          credentials: "include",
-        }
-      );
+      setIsLoading(true);
+      const response = await fetch(`/api/transaction?page=${pageToFetch}&limit=${pageLimit}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
 
       if (!response.ok) {
-        throw new Error(await response.text());
+        throw new Error('Failed to fetch transactions');
       }
 
-      const { transactions, totalPages, currentPage: current } = await response.json();
-
-      setTransactions(transactions);
-      setTotalPages(totalPages);
-      setCurrentPage(current);
-    } catch (err: any) {
-      setError(err.message || "Failed to fetch transactions");
-    } finally {
-      setLoading(false);
-    }
-  }, [currentPage]);
-
-  const fetchById = useCallback(
-    async (id: string) => {
-      setLoading(true);
+      const data = await response.json();
+      setTransactions(data.transactions);
+      setTotalPages(data.totalPages);
+      setCurrentPage(data.currentPage);
+      setPage(data.currentPage);
       setError(null);
-
-      try {
-        const response = await fetch(`/api/transaction/${id}`, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          credentials: "include",
-        });
-
-        if (!response.ok) {
-          throw new Error(await response.text());
-        }
-
-        const data: Transaction = await response.json();
-        setTransaction(data);
-      } catch (err: any) {
-        setError(err.message || "Failed to fetch transaction");
-      } finally {
-        setLoading(false);
-      }
-    },
-    []
-  );
+    } catch (err) {
+      setError(err instanceof Error ? err : new Error('An unknown error occurred'));
+      setTransactions([]);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   useEffect(() => {
     fetchTransactions();
-  }, [fetchTransactions]);
+  }, [session?.user, page]);
 
-  const setPage = (page: number) => {
-    if (page >= 1 && page <= totalPages) {
-      setCurrentPage(page);
-    } else {
-      setError("Invalid page number");
+  const refetch = (pageNumber?: number) => {
+    if (pageNumber) {
+      setPage(pageNumber);
     }
+    fetchTransactions();
   };
 
   return {
     transactions,
-    transaction,
-    loading,
+    isLoading,
     error,
-    fetchById,
-    refetch: fetchTransactions,
-    currentPage,
     totalPages,
-    setPage,
+    currentPage,
+    refetch,
   };
 };

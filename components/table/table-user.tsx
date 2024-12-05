@@ -97,7 +97,6 @@ export const TableUser = () => {
         <Table
           data={currentItems}
           columns={columns}
-
         />
       </div>
 
@@ -113,7 +112,6 @@ export const TableUser = () => {
   );
 };
 
-// Separate component to use the hook correctly
 const TransactionStatusCell = ({ txnId }: { txnId: string }) => {
   const { statusText, error, signal } = usePaymentStatus(txnId);
 
