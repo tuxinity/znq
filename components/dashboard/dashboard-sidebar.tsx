@@ -1,10 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { Home } from "lucide-react";
+import { Home, DollarSign } from "lucide-react";
 
 const navItems = [
   { name: "Dashboard", href: "/dashboard", icon: Home },
+  { name: "Withdraw", href: "/withdraw", icon: DollarSign },
 ];
 
 export function DashboardSidebar() {

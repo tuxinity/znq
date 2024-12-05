@@ -84,6 +84,7 @@ export async function POST(req: NextRequest) {
       data: {
         userId: user.id,
         txnId: transaction.txn_id,
+        txHash: "",
         value: amount,
         valueToken,
         type: "DEPOSIT",
