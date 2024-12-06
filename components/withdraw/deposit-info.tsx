@@ -23,21 +23,19 @@ import {
 } from "@/components/ui/select";
 import { CustomToast } from "./toast";
 import { useTransactions } from "@/context/TransactionContext";
-import { getSession } from "next-auth/react";
-import { getUserBalance } from "@/lib/balance";
 
 export function DepositInfo() {
   const [amount, setAmount] = useState("");
   const [paymentMethod, setPaymentMethod] = useState("USDT.BEP20");
-  const { tokenPriceUSD, error, prevPriceUSD, isLoading, buyError, tokenPriceBNB } = useTokenPurchase();
+  const { tokenPrice, error, prevPrice, isLoading, buyError } = useTokenPurchase();
   const {postWithdrawal, success, response, loading, refetch} = useTransactions();
   const [showToast, setShowToast] = useState<boolean>(false);
   const [toastMessage, setToastMessage] = useState<string>("");
   
 
-  const priceChange = tokenPriceUSD !== null && prevPriceUSD !== null ? tokenPriceUSD - prevPriceUSD : null;
+  const priceChange = tokenPrice !== null && prevPrice !== null ? tokenPrice - prevPrice : null;
   const priceChangePercentage =
-    priceChange !== null && prevPriceUSD !== null ? (priceChange / prevPriceUSD) * 100 : null;
+    priceChange !== null && prevPrice!== null ? (priceChange / prevPrice) * 100 : null;
 
   const formatPrice = (price: number | null) => {
     if (price === null) return "$-.--";
@@ -50,14 +48,9 @@ export function DepositInfo() {
   };
 
   const calculateTokenAmount = () => {
-    if (!amount || !tokenPriceUSD) return "0";
+    if (!amount || !tokenPrice) return "0";
 
-    if (paymentMethod === "BNB") {
-
-      return (Number(amount) * (tokenPriceBNB ?? 0)).toFixed(6);
-    }
-
-    return (Number(amount) * tokenPriceUSD).toFixed(6);
+    return (Number(amount) * tokenPrice).toFixed(6);
   };
 
   useEffect(() => {
@@ -67,7 +60,7 @@ export function DepositInfo() {
       setAmount("")
       refetch()
     } else {
-      setToastMessage(response.error || "Error occurred");
+      setToastMessage(response?.error || "Error occurred");
       setShowToast(true);
       setAmount("")
     }
@@ -96,7 +89,7 @@ export function DepositInfo() {
                       className={`text-2xl sm:text-3xl font-bold ${priceChange! >= 0 ? "text-green-500" : "text-red-500"
                         }`}
                     >
-                      {formatPrice(tokenPriceUSD)}
+                      {formatPrice(tokenPrice)}
                     </p>
                     <p className="text-xs sm:text-sm text-muted-foreground">ZENQ Token Price</p>
                   </div>
@@ -168,7 +161,7 @@ export function DepositInfo() {
                 }
               </div>
               {buyError && <p className="text-xs sm:text-sm text-destructive">{buyError}</p>}
-              {tokenPriceUSD && amount && (
+              {tokenPrice && amount && (
                 <p className="text-xs sm:text-sm text-muted-foreground text-white">
                   ≈ {calculateTokenAmount()} ZENQ
                 </p>
