@@ -87,7 +87,7 @@ export async function POST(req: NextRequest) {
           txHash: "",
           value: amount,
           type: "WITHDRAW",
-          status: "pending",
+          status: "PENDING",
           reference: "",
           valueToken: 0,
         },
