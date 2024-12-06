@@ -2,6 +2,32 @@ import { Resend } from "resend";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
+export const sendTwoFactorTokenEmail = async (email: string, token: string) => {
+  await resend.emails.send({
+    from: "Acme <onboarding@resend.dev>",
+    to: email,
+    subject: "Zenq - 2FA Code",
+    html: `<div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #ddd; border-radius: 10px;">
+        <div style="text-align: center; margin-bottom: 20px;">
+          <img src="https://ik.imagekit.io/msxxxaegj/coinpayment/logo-dark.png?updatedAt=1732088702629" alt="Company Logo" style="width: 100px; height: auto;">
+        </div>
+        <p>Your verification code: :</p>
+        <h2 style="color: #333;">${token}</h2>
+        <p style="margin-top: 20px;">The verification code will be valid for 30 minutes. Please do not share this code with anyone. Don’t recognize this activity? Please  reset your password and contact  customer support immediately. </p>
+        <hr style="margin: 30px 0;">
+        <div style="text-align: center; font-size: 12px; color: #777;">
+          <p>&copy; ${new Date().getFullYear()} Zenq. All rights reserved.</p>
+          <p> 
+              Stationsplein 45, 4th floor,
+              Stationsplein 45, 3013 AK 3013 Rotterdam,
+              Netherlands
+          </p>
+          <p><a href="https://zenqira.com/privacy" style="color: #007BFF; text-decoration: none;">Privacy Policy</a> | <a href="https://zenqira.com/terms" style="color: #007BFF; text-decoration: none;">Terms of Service</a></p>
+        </div>
+      </div>`
+  })
+}
+
 export const sendPasswordResetEmail = async (email: string, token: string) => {
   const resetLink = `http://localhost:3000/auth/new-password?token=${token}`;
 
