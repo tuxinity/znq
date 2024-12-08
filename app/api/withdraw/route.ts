@@ -13,8 +13,6 @@ export async function GET(req: NextRequest) {
     if (!session?.user?.id || !session?.user?.role) {
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
     }
-
-    console.log("session data", session.user.role)
     
     const { id, role } = session.user as { id: string, role: string };
     const searchParams = req.nextUrl.searchParams;

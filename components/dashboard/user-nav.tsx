@@ -46,7 +46,7 @@ export const UserNav = () => {
           </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
-        <DropdownMenuItem className="text-white" onClick={() => signOut()}>
+        <DropdownMenuItem className="text-white" onClick={() => signOut({callbackUrl: "/auth/login"})}>
           Log out
         </DropdownMenuItem>
       </DropdownMenuContent>

@@ -19,8 +19,10 @@ import {
 } from "@/components/ui";
 import { register } from "@/actions/register";
 import { useState, useTransition } from "react";
+import { Eye, EyeOff } from "lucide-react";
 
 export const RegisterForm = () => {
+  const [showPassword, setShowPassword] = useState<boolean>(false)
   const [error, setError] = useState<string | undefined>("");
   const [success, setSuccess] = useState<string | undefined>("");
   const [isPending, startTransition] = useTransition();
@@ -32,6 +34,8 @@ export const RegisterForm = () => {
       name: "",
     },
   });
+
+  const icon = showPassword ? <Eye/> : <EyeOff/>
 
   const onSubmit = (values: z.infer<typeof RegisterSchema>) => {
     setError("");
@@ -96,12 +100,20 @@ export const RegisterForm = () => {
                 <FormItem>
                   <FormLabel>Password</FormLabel>
                   <FormControl>
+                    <div className="relative">
                     <Input
                       disabled={isPending}
                       placeholder="******"
-                      type="password"
+                      type={showPassword ? "text" : "password"}
                       {...field}
                     />
+                      <div
+                        className="absolute inset-y-0 right-3 flex items-center cursor-pointer"
+                        onClick={() => setShowPassword(!showPassword)}
+                      >
+                        {icon}
+                      </div>
+                    </div>
                   </FormControl>
                   <FormMessage />
                 </FormItem>

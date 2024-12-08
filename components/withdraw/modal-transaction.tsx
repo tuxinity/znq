@@ -34,8 +34,6 @@ export const ModalWithdraw = ({ onClose, transaction }: ModalProps) => {
   };
 
   const currentTransaction = transaction;
-
-  console.log("current", currentTransaction)
   
 
   return (
