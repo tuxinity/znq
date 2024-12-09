@@ -2,7 +2,7 @@ import React from "react";
 import { useForm } from "react-hook-form";
 import { IUserTransaction } from "@/constant/userTransaction";
 import { useTransactions } from "@/context/TransactionContext";
-import { Dialog, DialogTrigger, DialogContent, DialogTitle, } from "../ui/dialog";
+import { Dialog, DialogTrigger, DialogContent, DialogTitle } from "../ui/dialog";
 
 type ModalProps = {
   onClose: () => void;
@@ -12,13 +12,15 @@ type ModalProps = {
 export const ModalWithdraw = ({ onClose, transaction }: ModalProps) => {
   const { updateWithdrawal, refetch } = useTransactions();
   const { register, handleSubmit } = useForm<IUserTransaction>({
-    defaultValues: {
-      id: transaction.id,
-      txHash: transaction.txHash,
-      status: transaction.status,
-      value: transaction.value,
-      createdAt: transaction.createdAt
-    },
+    defaultValues: transaction
+      ? {
+          id: transaction.id,
+          txHash: transaction.txHash,
+          status: transaction.status,
+          value: transaction.value,
+          createdAt: transaction.createdAt,
+        }
+      : {},
   });
 
   const onSubmit = async (data: Partial<IUserTransaction>) => {
@@ -27,9 +29,12 @@ export const ModalWithdraw = ({ onClose, transaction }: ModalProps) => {
       await refetch();
       onClose();
     } catch (error) {
-      console.error('Update failed', error);
+      console.error("Update failed", error);
     }
   };
+
+  const currentTransaction = transaction;
+  
 
   return (
     <Dialog open={true} onOpenChange={(open) => !open && onClose()}>
@@ -54,26 +59,26 @@ export const ModalWithdraw = ({ onClose, transaction }: ModalProps) => {
               <input
                 type="text"
                 id="id"
-                value={transaction.id}
+                value={currentTransaction?.id || ""}
                 readOnly
                 className="form-input min-w-full w-56 px-3 h-8 bg-transparent dark:bg-slate-900 dark:text-slate-200 rounded-md outline-none border border-gray-100 dark:border-gray-800 focus:ring-0 bg-white text-black shadow-md"
               />
             </div>
             <div>
-                <label
-                    htmlFor="txhash"
-                    className="block text-sm font-medium text-gray-700 dark:text-gray-300"
-                >
-                    Transaction Hash
-                </label>
-                <input
-                    type="text"
-                    id="txhash"
-                    placeholder="Input TxHash here to update withdraw status"
-                    {...register("txHash")}
-                    className="form-input min-h-10 min-w-full px-3 h-8 bg-transparent dark:bg-slate-900 dark:text-slate-200 rounded-md outline-none border border-gray-100 dark:border-gray-800 focus:ring-0 bg-white text-black shadow-md"
-                />
-                </div>
+              <label
+                htmlFor="txhash"
+                className="block text-sm font-medium text-gray-700 dark:text-gray-300"
+              >
+                Transaction Hash
+              </label>
+              <input
+                type="text"
+                id="txhash"
+                placeholder="Input TxHash here to update withdraw status"
+                {...register("txHash")}
+                className="form-input min-h-10 min-w-full px-3 h-8 bg-transparent dark:bg-slate-900 dark:text-slate-200 rounded-md outline-none border border-gray-100 dark:border-gray-800 focus:ring-0 bg-white text-black shadow-md"
+              />
+            </div>
             <div>
               <label
                 htmlFor="value"
@@ -84,12 +89,11 @@ export const ModalWithdraw = ({ onClose, transaction }: ModalProps) => {
               <input
                 type="number"
                 id="value"
-                value={transaction.value}
+                value={currentTransaction?.value || ""}
                 readOnly
                 className="form-input min-h-10 min-w-full px-3 h-8 bg-transparent dark:bg-slate-900 dark:text-slate-200 rounded-md outline-none border border-gray-100 dark:border-gray-800 focus:ring-0 bg-white text-black shadow-md"
               />
             </div>
-
             <div>
               <label
                 htmlFor="status"
@@ -100,12 +104,11 @@ export const ModalWithdraw = ({ onClose, transaction }: ModalProps) => {
               <input
                 type="text"
                 id="status"
-                value={transaction.status}
+                value={currentTransaction?.status || ""}
                 readOnly
                 className="form-input min-h-10 min-w-full px-3 h-8 bg-transparent dark:bg-slate-900 dark:text-slate-200 rounded-md outline-none border border-gray-100 dark:border-gray-800 focus:ring-0 bg-white text-black shadow-md"
               />
             </div>
-
             <div>
               <label
                 htmlFor="createdAt"
@@ -116,12 +119,15 @@ export const ModalWithdraw = ({ onClose, transaction }: ModalProps) => {
               <input
                 type="text"
                 id="createdAt"
-                value={new Date(transaction.createdAt).toLocaleDateString()}
+                value={
+                  currentTransaction?.createdAt
+                    ? new Date(currentTransaction.createdAt).toLocaleDateString()
+                    : ""
+                }
                 readOnly
                 className="form-input min-w-full px-3 h-8 bg-transparent dark:bg-slate-900 dark:text-slate-200 rounded-md outline-none border border-gray-100 dark:border-gray-800 focus:ring-0 bg-white text-black shadow-md"
               />
             </div>
-
             <div className="flex justify-end p-4 md:p-5 border-t border-gray-200 rounded-b dark:border-gray-600">
               <button
                 type="submit"

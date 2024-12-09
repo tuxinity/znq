@@ -2,12 +2,17 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "../../prisma";
 import { auth } from "@/auth";
 
+export async function GET(request: NextRequest) {
+  const { pathname } = request.nextUrl;
+  const segments = pathname.split("/");
+  const id = segments[segments.length - 1];
 
-export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
-  const { id } = params;
+  if (!id) {
+    return NextResponse.json({ message: "Transaction ID is required" }, { status: 400 });
+  }
 
   try {
-    const session = await auth()
+    const session = await auth();
 
     if (!session) {
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
@@ -41,11 +46,17 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
   }
 }
 
-export async function PUT(req: NextRequest, { params }: { params: { id: string } }) {
-  const { id } = params;
+export async function PUT(req: NextRequest) {
+  const { pathname } = req.nextUrl;
+  const segments = pathname.split("/");
+  const id = segments[segments.length - 1];
+
+  if (!id) {
+    return NextResponse.json({ message: "Transaction ID is required" }, { status: 400 });
+  }
 
   try {
-    const session = await auth()
+    const session = await auth();
 
     if (!session) {
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 });

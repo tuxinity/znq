@@ -8,7 +8,7 @@ interface TransactionContextType {
   withdraw: IUserTransaction[];
   loading: boolean;
   error: string | null;
-  response: object;
+  response: { error?: string } | null;
   success: boolean;
   fetchWithdrawals: () => Promise<void>;
   fetchById: (id: string) => Promise<void>;
@@ -25,7 +25,7 @@ export const TransactionProvider: React.FC<{ children: React.ReactNode }> = ({ c
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<boolean>(false);
-  const [response, setResponse] = useState<object>({});
+  const [response, setResponse] = useState<{ error?: string } | null>(null);
 
   const fetchWithdrawals = useCallback(async () => {
     setLoading(true);

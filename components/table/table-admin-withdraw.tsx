@@ -5,24 +5,13 @@ import { createColumnHelper } from "@tanstack/react-table";
 
 import Link from "next/link";
 import Table from "../ui/table";
-import { Badge } from "../ui/badge";
 import Pagination from "../pagination";
-import { usePaymentStatus } from "@/hooks/usePaymentStatus";
 import { TransactionProvider, useTransactions } from "@/context/TransactionContext";
 import { ModalWithdraw } from "../withdraw/modal-transaction";
 import { Input } from "../ui";
 import { Search } from "lucide-react";
+import { IUserTransaction } from "@/constant/userTransaction";
 
-export interface IUserTransaction {
-  id: string;
-  txHash: string;
-  email: string;
-  transactionDate: string;
-  amount: number;
-  status: string;
-  reference: string;
-  action: () => void;
-}
 
 const columnHelper = createColumnHelper<IUserTransaction>();
 
@@ -104,15 +93,21 @@ export const TableAdminWithdraw = () => {
 
   const DataTableTransaction = useMemo(() => {
     if (!withdrawals) return [];
-
+  
     return withdrawals.map((item) => ({
-      txHash: item.txHash || "",
       id: item.id || "",
-      email: item.user.email || "",
-      amount: item.value || 0,
-      status: item.status || '',
-      reference: item.reference || '',
-      transactionDate: new Date(item.createdAt).toLocaleDateString() || "",
+      txnId: item.txnId || "",
+      txHash: item.txHash || "",
+      email: item.user?.email || "N/A",
+      value: item.value || "",
+      amount: typeof item.value === "number" ? item.value : 0, 
+      status: item.status || "",
+      reference: item.reference || "",
+      transactionDate: item.createdAt
+        ? new Date(item.createdAt).toLocaleDateString()
+        : "N/A",
+      user: item.user ? { email: item.user.email } : undefined, 
+      action: () => handleOpenTransaction(item.id || ""), 
     }));
   }, [withdrawals]);
 
@@ -157,32 +152,11 @@ export const TableAdminWithdraw = () => {
           colorScheme="green"
         />
       )}
+      
       {modalOpen && withdraw && (
+        // eslint-disable-next-line
+        // @ts-expect-error
         <ModalWithdraw onClose={() => setModalOpen(false)} transaction={withdraw} />
-      )}
-    </div>
-  );
-};
-
-const TransactionStatusCell = ({ txnId }: { txnId: string }) => {
-  const { statusText, error, signal } = usePaymentStatus(txnId);
-
-  if (error) {
-    return (
-      <div className="text-red-500 text-center">
-        Error: {error}
-      </div>
-    );
-  }
-
-  return (
-    <div className="min-w-[13rem] font-bold text-md capitalize text-center">
-      {statusText ? (
-        <Badge variant={signal < 0 ? "destructive" : signal === 0 ? "warning" : "success"}>
-          {statusText}
-        </Badge>
-      ) : (
-        <div className="text-gray-500">Loading...</div>
       )}
     </div>
   );

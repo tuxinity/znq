@@ -7,6 +7,7 @@ import { useForm } from "react-hook-form";
 import { useState, useTransition } from "react";
 import { useSearchParams } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { Eye, EyeOff } from "lucide-react";
 
 import {
   Form,
@@ -25,6 +26,7 @@ import { FormSuccess } from "../form-success";
 
 export const LoginForm = () => {
   const searchParams = useSearchParams();
+  const [showPassword, setShowPassword] = useState<boolean>(false)
   const urlError =
     searchParams.get("error") === "OAuthAccountNotLinked"
       ? "Email already in use with different provider!"
@@ -40,6 +42,8 @@ export const LoginForm = () => {
       password: "",
     },
   });
+
+  const icon = showPassword ? <Eye/> : <EyeOff/>
 
   const onSubmit = (values: z.infer<typeof LoginSchema>) => {
     setError("");
