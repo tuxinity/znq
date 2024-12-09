@@ -27,13 +27,17 @@ import {
 
 export function BalanceInfo() {
   const [amount, setAmount] = useState("");
-  const { isLoading: balancesLoading, balances } = useBalances()
+  const { isLoading: balancesLoading, balances } = useBalances();
   const [paymentMethod, setPaymentMethod] = useState("USDT.BEP20");
-  const { tokenPrice, handleBuy, error, prevPrice, isLoading, buyError } = useTokenPurchase();
+  const { tokenPrice, handleBuy, error, prevPrice, isLoading, buyError } =
+    useTokenPurchase();
 
-  const priceChange = tokenPrice !== null && prevPrice !== null ? tokenPrice - prevPrice : null;
+  const priceChange =
+    tokenPrice !== null && prevPrice !== null ? tokenPrice - prevPrice : null;
   const priceChangePercentage =
-    priceChange !== null && prevPrice !== null ? (priceChange / prevPrice) * 100 : null;
+    priceChange !== null && prevPrice !== null
+      ? (priceChange / prevPrice) * 100
+      : null;
 
   const formatPrice = (price: number | null) => {
     if (price === null) return "-.--";
@@ -55,14 +59,18 @@ export function BalanceInfo() {
       <div className="grid gap-4 sm:gap-5 md:gap-6 grid-cols-1 md:grid-cols-3">
         <Card className="bg-slate-800 text-white border-gray-700 w-full">
           <CardHeader>
-            <CardTitle className="text-lg sm:text-xl font-bold">Balance Information</CardTitle>
+            <CardTitle className="text-lg sm:text-xl font-bold">
+              Balance Information
+            </CardTitle>
             <CardDescription className="text-xs sm:text-sm text-gray-400">
               Your ZENQ token details
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4 sm:space-y-6">
             {isLoading ? (
-              <p className="text-xs sm:text-sm text-muted-foreground">Loading price...</p>
+              <p className="text-xs sm:text-sm text-muted-foreground">
+                Loading price...
+              </p>
             ) : error ? (
               <p className="text-xs sm:text-sm text-destructive">{error}</p>
             ) : (
@@ -70,17 +78,21 @@ export function BalanceInfo() {
                 <div className="flex items-center justify-between">
                   <div>
                     <p
-                      className={`text-2xl sm:text-3xl font-bold ${priceChange! >= 0 ? "text-green-500" : "text-red-500"
-                        }`}
+                      className={`text-2xl sm:text-3xl font-bold ${
+                        priceChange! >= 0 ? "text-green-500" : "text-red-500"
+                      }`}
                     >
                       {formatPrice(tokenPrice)}
                     </p>
-                    <p className="text-xs sm:text-sm text-muted-foreground">ZENQ Token Price</p>
+                    <p className="text-xs sm:text-sm text-muted-foreground">
+                      ZENQ Token Price
+                    </p>
                   </div>
                   {priceChange !== null && (
                     <div
-                      className={`flex items-center ${priceChange >= 0 ? "text-green-500" : "text-red-500"
-                        }`}
+                      className={`flex items-center ${
+                        priceChange >= 0 ? "text-green-500" : "text-red-500"
+                      }`}
                     >
                       {priceChange >= 0 ? (
                         <ArrowUpCircle className="w-4 h-4 sm:w-5 sm:h-5 mr-1" />
@@ -107,11 +119,19 @@ export function BalanceInfo() {
                 />
               </div>
               <div>
-                {
-                  balancesLoading ? (<p className="text-xs sm:text-sm text-muted-foreground">Loading balances...</p>) : (<p className="text-xl sm:text-2xl font-bold">{formatPrice(balances?.totalValueToken ?? 0)}</p>)
-                }
+                {balancesLoading ? (
+                  <p className="text-xs sm:text-sm text-muted-foreground">
+                    Loading balances...
+                  </p>
+                ) : (
+                  <p className="text-xl sm:text-2xl font-bold">
+                    {formatPrice(balances?.totalValueToken ?? 0)}
+                  </p>
+                )}
 
-                <p className="text-xs sm:text-sm text-muted-foreground">ZENQ Balance</p>
+                <p className="text-xs sm:text-sm text-muted-foreground">
+                  ZENQ Balance
+                </p>
               </div>
             </div>
           </CardContent>
@@ -119,7 +139,9 @@ export function BalanceInfo() {
 
         <Card className="md:col-span-2 bg-slate-800 text-white border-gray-700 w-full">
           <CardHeader>
-            <CardTitle className="text-lg sm:text-2xl font-bold">Purchase ZENQ Tokens</CardTitle>
+            <CardTitle className="text-lg sm:text-2xl font-bold">
+              Purchase ZENQ Tokens
+            </CardTitle>
             <CardDescription className="text-xs sm:text-sm text-gray-400">
               Buy ZENQ tokens using USDT
             </CardDescription>
@@ -131,7 +153,7 @@ export function BalanceInfo() {
                   type="number"
                   placeholder="Enter amount in USDT"
                   value={amount}
-                  onChange={(e) => {
+                  onChange={e => {
                     const inputValue = e.target.value;
                     if (inputValue === "" || /^\d*\.?\d*$/.test(inputValue)) {
                       setAmount(inputValue);
@@ -139,15 +161,17 @@ export function BalanceInfo() {
                   }}
                   className="pr-12 text-xs sm:text-sm"
                 />
-                {
-                  paymentMethod === "BNB" ? (
-                    <SiBinance className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground w-4 h-4 sm:w-5 sm:h-5 text-yellow-500" />
-                  ) : (
-                    <DollarSign className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground w-4 h-4 sm:w-5 sm:h-5" />
-                  )
-                }
+                {paymentMethod === "BNB" ? (
+                  <SiBinance className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground w-4 h-4 sm:w-5 sm:h-5 text-yellow-500" />
+                ) : (
+                  <DollarSign className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground w-4 h-4 sm:w-5 sm:h-5" />
+                )}
               </div>
-              {buyError && <p className="text-xs sm:text-sm text-destructive">{buyError}</p>}
+              {buyError && (
+                <p className="text-xs sm:text-sm text-destructive">
+                  {buyError}
+                </p>
+              )}
               {tokenPrice && amount && (
                 <p className="text-xs sm:text-sm text-muted-foreground text-white">
                   ≈ {calculateTokenAmount()} ZENQ
@@ -156,7 +180,7 @@ export function BalanceInfo() {
             </div>
           </CardContent>
           <CardFooter className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-5">
-            <Select onValueChange={(value) => setPaymentMethod(value)}>
+            <Select onValueChange={value => setPaymentMethod(value)}>
               <SelectTrigger className="w-full sm:w-[180px] text-xs sm:text-sm">
                 <SelectValue placeholder="Select a payment" />
               </SelectTrigger>
@@ -182,5 +206,3 @@ export function BalanceInfo() {
 }
 
 export default BalanceInfo;
-
-

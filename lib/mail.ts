@@ -1,9 +1,10 @@
 import { Resend } from "resend";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
+const baseUrl = process.env.BASE_URL || "http://localhost:3000";
 
 export const sendPasswordResetEmail = async (email: string, token: string) => {
-  const resetLink = `http://localhost:3000/auth/new-password?token=${token}`;
+  const resetLink = `${baseUrl}/auth/new-password?token=${token}`;
 
   await resend.emails.send({
     from: "Acme <onboarding@resend.dev>",
