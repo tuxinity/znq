@@ -1,10 +1,11 @@
 "use client"
 
-
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
   DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu"
 import {
@@ -30,9 +31,18 @@ export const UserButton = () => {
           </AvatarFallback>
         </Avatar>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="w-40" align="end">
+      <DropdownMenuContent className="w-40 bg-slate-900" align="end" forceMount>
+        <DropdownMenuLabel className="font-normal">
+          <div className="flex flex-col space-y-1">
+            <p className="text-sm font-medium leading-none text-white">{user?.name}</p>
+            <p className="text-xs leading-none text-muted-foreground text-slate-300">
+              {user?.email}
+            </p>
+          </div>
+        </DropdownMenuLabel>
+        <DropdownMenuSeparator />
         <LogoutButton>
-          <DropdownMenuItem>
+          <DropdownMenuItem className="text-white">
             <ExitIcon className="h-4 w-4 mr-2" />
             Logout
           </DropdownMenuItem>

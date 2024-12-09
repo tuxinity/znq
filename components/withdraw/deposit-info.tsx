@@ -28,14 +28,14 @@ export function DepositInfo() {
   const [amount, setAmount] = useState("");
   const [paymentMethod, setPaymentMethod] = useState("USDT.BEP20");
   const { tokenPrice, error, prevPrice, isLoading, buyError } = useTokenPurchase();
-  const {postWithdrawal, success, response, loading, refetch} = useTransactions();
+  const { postWithdrawal, success, response, loading, refetch } = useTransactions();
   const [showToast, setShowToast] = useState<boolean>(false);
   const [toastMessage, setToastMessage] = useState<string>("");
-  
+
 
   const priceChange = tokenPrice !== null && prevPrice !== null ? tokenPrice - prevPrice : null;
   const priceChangePercentage =
-    priceChange !== null && prevPrice!== null ? (priceChange / prevPrice) * 100 : null;
+    priceChange !== null && prevPrice !== null ? (priceChange / prevPrice) * 100 : null;
 
   const formatPrice = (price: number | null) => {
     if (price === null) return "$-.--";
@@ -67,7 +67,7 @@ export function DepositInfo() {
   }, [success]);
 
   return (
-    <div className="container mx-auto p-4 sm:p-6 md:p-8 mt-4 sm:mt-6 md:mt-10">
+    <div className="mx-auto p-4 sm:p-6 md:p-8 mt-4 sm:mt-6 md:mt-10">
       <div className="grid gap-4 sm:gap-5 md:gap-6 grid-cols-1 md:grid-cols-3">
         <Card className="bg-slate-800 text-white border-gray-700 w-full">
           <CardHeader>
