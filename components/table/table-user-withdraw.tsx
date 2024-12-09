@@ -69,15 +69,16 @@ export const TableUserWithdraw = () => {
 
   const DataTableTransaction = useMemo(() => {
     if (!withdrawals) return [];
-
+  
     return withdrawals.map((item) => ({
       txnId: item.txnId || "",
-      amount: item.value || 0,
+      amount: Number(item.value) || 0,
       status: item.status || '',
       reference: item.reference || '',
-      transactionDate: new Date(item.createdAt).toLocaleDateString() || "",
+      transactionDate: item.createdAt ? new Date(item.createdAt).toLocaleDateString() : "",
     }));
   }, [withdrawals]);
+  
 
   const itemsPerPage = 10;
   const [currentPage, setCurrentPage] = useState(1);
