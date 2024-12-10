@@ -29,6 +29,7 @@ model User {
   name                  String?
   email                 String?                 @unique
   emailVerified         DateTime?               @map("email_verified")
+  addressWallet         String?
   password              String?
   image                 String?
   role                  UserRole                @default(USER)

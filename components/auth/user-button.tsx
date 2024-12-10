@@ -17,9 +17,12 @@ import { FaUser } from "react-icons/fa"
 import { ExitIcon } from "@radix-ui/react-icons"
 import { useCurrentUser } from "@/hooks/useCurrentUser"
 import { LogoutButton } from "./logout-button"
+import { UserInfoDialog } from "../user-info-dialog"
 
 export const UserButton = () => {
   const user = useCurrentUser()
+
+  console.log("user", user)
 
   return (
     <DropdownMenu>
@@ -41,6 +44,7 @@ export const UserButton = () => {
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
+        <UserInfoDialog user={user}/>
         <LogoutButton>
           <DropdownMenuItem className="text-white">
             <ExitIcon className="h-4 w-4 mr-2" />
