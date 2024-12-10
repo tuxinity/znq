@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import Image from "next/image"
-import { UserNav } from "./user-nav";
+import { UserButton } from "../auth/user-button";
 
 export const TopNav = () => {
   return (
@@ -14,7 +14,7 @@ export const TopNav = () => {
           <Image src="/logo-text.png" alt="logo-image" width={150} height={40} />
         </Link>
         <div className="ml-auto flex items-center space-x-4">
-          <UserNav />
+          <UserButton />
         </div>
       </div>
     </header>

@@ -3,10 +3,10 @@ import { DepositInfo } from "@/components/withdraw/deposit-info";
 
 const WithdrawPage = () => {
   return (
-    <div>
+    <>
       <DepositInfo />
       <TableUserWithdraw />
-    </div>
+    </>
   );
 };
 

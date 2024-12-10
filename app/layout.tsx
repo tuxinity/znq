@@ -1,8 +1,9 @@
-import { TransactionProvider } from "@/context/TransactionContext";
 import "./globals.css";
+import { Toaster } from "sonner";
 import type { Metadata } from "next";
-import { SessionProvider } from "next-auth/react";
 import localFont from "next/font/local";
+import { SessionProvider } from "next-auth/react";
+import { TransactionProvider } from "@/context/TransactionContext";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -33,6 +34,7 @@ export default function RootLayout({
         <SessionProvider>
           <TransactionProvider>
             {children}
+            <Toaster />
           </TransactionProvider>
         </SessionProvider>
       </body>
