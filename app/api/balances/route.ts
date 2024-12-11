@@ -24,9 +24,12 @@ export async function GET() {
     });
 
     const balances = transactions.reduce((acc, txn) => {
-      if (txn.status === 'SUCCESS') {
+      if (txn.type === "DEPOSIT" && txn.status === 'SUCCESS') {
         acc.totalValue += txn.value;
         acc.totalValueToken += txn.valueToken;
+      } else if (txn.type === "WITHDRAW" && txn.status === 'SUCCESS') {
+        acc.totalValue -= txn.value;
+        acc.totalValueToken -= txn.valueToken;
       }
       return acc;
     }, {

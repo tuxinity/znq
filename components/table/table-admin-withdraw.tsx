@@ -17,7 +17,7 @@ const columnHelper = createColumnHelper<IUserTransaction>();
 
 export const TableAdminWithdraw = () => {
   const { withdrawals, withdraw, fetchById, fetchWithdrawals } = useTransactions();
-  const [modalOpen, setModalOpen] = useState<boolean>(true);
+  const [modalOpen, setModalOpen] = useState<boolean>(false);
 
   const handleOpenTransaction = async (id: string) => {
     await fetchById(id);
