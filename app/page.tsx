@@ -21,7 +21,8 @@ export default function Home() {
           ZENQIRA
         </h1>
         <p className="text-white text-lg items-center">
-          simple authentication service
+          Unleashing unparalleled computational capabilities
+          for tomorrow&apos;s AI solutions.Unleashing unparalleled computational capabilities
         </p>
         <div className="items-center justify-center">
           <LoginButton>

@@ -3,7 +3,15 @@ import { UserRole } from "@prisma/client";
 
 export const SettingsSchema = z
   .object({
-    name: z.optional(z.string()),
+    name: z.string().min(1, {
+      message: "Name is required",
+    }),
+    walletAddress: z
+      .string()
+      .min(1, "Wallet address is required!")
+      .refine(address => /^0x[a-fA-F0-9]{40}$/.test(address), {
+        message: "Invalid wallet address format!",
+      }),
     isTwoFactorEnabled: z.optional(z.boolean()),
     role: z.enum([UserRole.ADMIN, UserRole.USER]),
     email: z.optional(z.string().email()),
