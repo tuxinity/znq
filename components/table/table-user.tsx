@@ -124,7 +124,11 @@ const TransactionStatusCell = ({ txnId }: { txnId: string }) => {
       {statusText ? (
         <Badge
           variant={
-            signal < 0 ? "destructive" : signal === 0 ? "warning" : "success"
+            signal === 100
+              ? "success"
+              : signal === 0
+              ? "warning"
+              : "destructive"
           }
         >
           {statusText}

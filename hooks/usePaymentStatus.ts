@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 
 export const usePaymentStatus = (txnId: string) => {
   const [statusText, setStatusText] = useState<string | null>(null);
-  const [signal, setSignal] = useState(0)
+  const [signal, setSignal] = useState(0);
 
   const [error, setError] = useState<string | null>(null);
 
@@ -16,8 +16,6 @@ export const usePaymentStatus = (txnId: string) => {
           throw new Error("Failed to fetch payment status");
         }
         const data = await response.json();
-
-
         setSignal(data.data.coinpaymentsStatus.status);
         setStatusText(data.data.transaction.status);
       } catch (err) {
