@@ -52,7 +52,7 @@ export default auth(req => {
       return NextResponse.redirect(new URL("/auth/login", nextUrl));
     }
 
-    if (UserRole.USER) {
+    if (!UserRole.ADMIN) {
       return NextResponse.redirect(new URL(`/dashboard`, nextUrl));
     }
   }
