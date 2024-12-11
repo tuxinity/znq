@@ -19,6 +19,8 @@ export const TableAdminWithdraw = () => {
     const { withdrawals, withdraw, fetchById } = useTransactions();
     const [modalOpen, setModalOpen] = useState<boolean>(false);
 
+    console.log("withdrawals", withdrawals);
+
   const handleOpenTransaction = async (id: string) => {
     await fetchById(id);
     setModalOpen(true);
@@ -40,6 +42,16 @@ export const TableAdminWithdraw = () => {
           </div>
         ),
         header: () => <div>user</div>,
+      }),
+      columnHelper.accessor("reference", {
+        cell: info => (
+          <Link href={info.row.original.reference}>
+            <div className="min-w-[13rem] font-bold text-md text-center hover:text-blue-700">
+              {info.getValue().slice(0, 20) + "..."}
+            </div>
+          </Link>
+        ),
+        header: () => <div className="text-center">Reference</div>,
       }),
     columnHelper.accessor("txHash", {
       cell: info => (
@@ -64,16 +76,6 @@ export const TableAdminWithdraw = () => {
         </div>
       ),
       header: () => <div className="text-center">Status</div>,
-    }),
-    columnHelper.accessor("reference", {
-      cell: info => (
-        <Link href={info.row.original.reference}>
-          <div className="min-w-[13rem] font-bold text-md text-center hover:text-blue-700">
-            {info.getValue().slice(0, 20) + "..."}
-          </div>
-        </Link>
-      ),
-      header: () => <div className="text-center">Reference</div>,
     }),
     columnHelper.accessor("action", {
         cell: (info) => {

@@ -23,10 +23,12 @@ import {
 } from "@/components/ui/select";
 import { CustomToast } from "./toast";
 import { useTransactions } from "@/context/TransactionContext";
+import { useBalances } from "@/hooks/useBalance";
 
 export function DepositInfo() {
   const [amount, setAmount] = useState("");
   const [paymentMethod, setPaymentMethod] = useState("USDT.BEP20");
+  const { isLoading: balancesLoading, balances } = useBalances();
   const { tokenPrice, error, prevPrice, isLoading, buyError } = useTokenPurchase();
   const { postWithdrawal, success, response, loading, refetch } = useTransactions();
   const [showToast, setShowToast] = useState<boolean>(false);
@@ -123,7 +125,13 @@ export function DepositInfo() {
                 />
               </div>
               <div>
-                <p className="text-xl sm:text-2xl font-bold">{formatPrice(12345678)}</p>
+              {balancesLoading ? (
+                  <p className="text-xs sm:text-sm text-muted-foreground">
+                    Loading balances...
+                  </p>
+                ) : (
+                <p className="text-xl sm:text-2xl font-bold">{formatPrice(balances?.totalValueToken ?? 0)}</p>
+                )}
                 <p className="text-xs sm:text-sm text-muted-foreground">ZENQ Balance</p>
               </div>
             </div>
@@ -183,7 +191,7 @@ export function DepositInfo() {
               onClick={() => postWithdrawal(Number(amount))}
               disabled={!amount || loading || isLoading || !!error}
             >
-              {isLoading ? "Processing..." : "Buy ZENQ"}
+              {isLoading ? "Processing..." : "Withdraw ZENQ"}
             </Button>
           </CardFooter>
         </Card>
