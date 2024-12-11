@@ -18,6 +18,11 @@ enum UserRole {
   USER
 }
 
+enum TransactionType {
+  DEPOSIT
+  WITHDRAW
+}
+
 enum TransactionStatus {
   PENDING
   SUCCESS
@@ -102,7 +107,7 @@ model Transaction {
   txHash              String
   value               Int
   valueToken          Float
-  type                String
+  type                TransactionType
   status              TransactionStatus   @default(PENDING)
   reference           String
   createdAt           DateTime            @default(now())
