@@ -18,33 +18,54 @@ const client = new Coinpayments({
 export async function GET(req: NextRequest) {
   try {
     const { searchParams } = new URL(req.url);
-    const txn_id = searchParams.get('txnid');
-    const session = await auth()
+    const txn_id = searchParams.get("txnid");
+    const session = await auth();
 
     if (!session) {
-      console.error('No session found');
+      console.error("Unauthorized: No session found");
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
     }
 
     if (!txn_id) {
-      return NextResponse.json({ success: false, error: "Transaction ID is required" }, { status: 400 });
+      return NextResponse.json(
+        { success: false, error: "Transaction ID is required" },
+        { status: 400 }
+      );
     }
 
+    // Retrieve transaction status from CoinPayments
     const status = await client.getTx({ txid: txn_id });
+    const txStatus =
+      status.status === 100
+        ? "SUCCESS"
+        : status.status === 0
+        ? "PENDING"
+        : "REJECTED";
 
-    const txStatus = status.status === 1 ? "SUCCESS" : status.status === 0 ? "PENDING" : "REJECTED";
-
-    await db.transaction.updateMany({
+    // Update the transaction status in the database
+    const updateResult = await db.transaction.updateMany({
       where: { txnId: txn_id },
       data: { status: txStatus },
     });
 
+    if (updateResult.count === 0) {
+      console.warn("No transactions were updated for txnId", txn_id);
+      return NextResponse.json(
+        { success: false, error: "Transaction not found or already updated" },
+        { status: 404 }
+      );
+    }
+
+    // Fetch the updated transaction
     const updatedTransaction = await db.transaction.findFirst({
-      where: { userId: session.user.id },
+      where: { txnId: txn_id, userId: session.user.id },
     });
 
     if (!updatedTransaction) {
-      return NextResponse.json({ success: false, error: "Transaction not found in database" }, { status: 404 });
+      return NextResponse.json(
+        { success: false, error: "Transaction not found in database" },
+        { status: 404 }
+      );
     }
 
     const response = {
@@ -60,20 +81,25 @@ export async function GET(req: NextRequest) {
           status: status.status,
           statusText: status.status_text,
           coin: status.coin,
-          amountf: status.amountf,
+          amount: status.amount,
           receivedAmount: status.received,
           receivedConfirms: status.recv_confirms,
-        }
-      }
+        },
+      },
     };
 
     return NextResponse.json(response, { status: 200 });
   } catch (error) {
     console.error("Error updating transaction status:", error);
-    return NextResponse.json({
-      success: false,
-      error: error instanceof Error ? error.message : "An unexpected error occurred"
-    }, { status: 500 });
+    return NextResponse.json(
+      {
+        success: false,
+        error:
+          error instanceof Error
+            ? error.message
+            : "An unexpected error occurred",
+      },
+      { status: 500 }
+    );
   }
 }
-

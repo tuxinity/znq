@@ -43,6 +43,8 @@ body,
     --sidebar-accent-foreground: 240 5.9% 10%;
     --sidebar-border: 220 13% 91%;
     --sidebar-ring: 217.2 91.2% 59.8%;
+    --switch-on: 220 90% 56%;
+    --switch-off: 215 20% 65%;
   }
   .dark {
     --background: 222.2 84% 4.9%;

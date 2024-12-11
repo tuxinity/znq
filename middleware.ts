@@ -7,6 +7,8 @@ import {
   DEFAULT_LOGIN_REDIRECT,
   authRoutes,
 } from "@/routes";
+import { NextResponse } from "next/server";
+import { UserRole } from "@prisma/client";
 
 const { auth } = NextAuth(authConfig);
 
@@ -18,6 +20,10 @@ export default auth(req => {
   const isApiAuthRoute = nextUrl.pathname.startsWith(apiAuthPrefix);
   const isPublicRoute = publicRoutes.includes(nextUrl.pathname);
   const isAuthRoute = authRoutes.includes(nextUrl.pathname);
+
+  if (nextUrl.pathname === "/") {
+    return NextResponse.redirect(new URL("/dashboard", req.url));
+  }
 
   if (isApiAuthRoute) {
     return null;
@@ -31,7 +37,24 @@ export default auth(req => {
   }
 
   if (!isLoggedIn && !isPublicRoute) {
-    return Response.redirect(new URL("/auth/login", nextUrl));
+    let callbackUrl = nextUrl.pathname;
+    if (nextUrl.search) {
+      callbackUrl += nextUrl.search;
+    }
+    const encodedCallbackUrl = encodeURIComponent(callbackUrl);
+    return Response.redirect(
+      new URL(`/auth/login?${encodedCallbackUrl}`, nextUrl)
+    );
+  }
+
+  if (nextUrl.pathname === "/dashboard/admin") {
+    if (!isLoggedIn) {
+      return NextResponse.redirect(new URL("/auth/login", nextUrl));
+    }
+
+    if (UserRole.USER) {
+      return NextResponse.redirect(new URL(`/dashboard`, nextUrl));
+    }
   }
 
   return null;
