@@ -11,7 +11,7 @@ export const TopNav = () => {
           href="/dashboard"
           className="flex items-center text-lg font-semibold"
         >
-          <Image src="/logo-text.png" alt="logo-image" width={150} height={40} />
+          <Image src="/logo-text.png" alt="logo-image" width={120} height={0} className="w-auto h-auto" style={{ width: "auto", height: "auto" }} priority />
         </Link>
         <div className="ml-auto flex items-center space-x-4">
           <UserButton />

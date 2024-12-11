@@ -1,5 +1,5 @@
 import "./globals.css";
-import { Toaster } from "@/components/ui/toaster"
+import { Toaster } from "sonner"
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import { SessionProvider } from "next-auth/react";

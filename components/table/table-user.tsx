@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import React, { useMemo, useState } from "react";
 import { createColumnHelper } from "@tanstack/react-table";
@@ -23,58 +23,61 @@ const columnHelper = createColumnHelper<IUserTransaction>();
 export const TableUser = () => {
   const { transactions } = useTransactions();
 
-  const columns = useMemo(() => [
-    columnHelper.accessor("transactionDate", {
-      cell: info => (
-        <div className="min-w-[5rem] font-bold text-sm capitalize text-center">
-          {info.getValue()}
-        </div>
-      ),
-      header: () => <div>Date</div>,
-    }),
-    columnHelper.accessor("txnId", {
-      cell: info => (
-        <div className="min-w-[13rem] font-bold text-md capitalize text-center">
-          {info.getValue()}
-        </div>
-      ),
-      header: () => <div className="text-center">txnId</div>,
-    }),
-    columnHelper.accessor("amount", {
-      cell: info => (
-        <div className="min-w-[13rem] font-bold text-md capitalize text-center">
-          {info.getValue()}
-        </div>
-      ),
-      header: () => <div className="text-center">ZENQ Asset</div>,
-    }),
-    columnHelper.accessor("status", {
-      cell: info => {
-        const txnId = info.row.original.txnId;
-        return <TransactionStatusCell txnId={txnId} />;
-      },
-      header: () => <div className="text-center">Status</div>,
-    }),
-    columnHelper.accessor("reference", {
-      cell: info => (
-        <Link href={info.row.original.reference}>
-          <div className="min-w-[13rem] font-bold text-md text-center hover:text-blue-700">
-            {info.getValue().slice(0, 20) + "..."}
+  const columns = useMemo(
+    () => [
+      columnHelper.accessor("transactionDate", {
+        cell: info => (
+          <div className="min-w-[5rem] font-bold text-sm capitalize text-center">
+            {info.getValue()}
           </div>
-        </Link>
-      ),
-      header: () => <div className="text-center">Reference</div>,
-    }),
-  ], []);
+        ),
+        header: () => <div>Date</div>,
+      }),
+      columnHelper.accessor("txnId", {
+        cell: info => (
+          <div className="min-w-[13rem] font-bold text-md capitalize text-center">
+            {info.getValue()}
+          </div>
+        ),
+        header: () => <div className="text-center">Payment ID</div>,
+      }),
+      columnHelper.accessor("amount", {
+        cell: info => (
+          <div className="min-w-[13rem] font-bold text-md capitalize text-center">
+            {info.getValue()}
+          </div>
+        ),
+        header: () => <div className="text-center">ZENQ Asset</div>,
+      }),
+      columnHelper.accessor("status", {
+        cell: info => {
+          const txnId = info.row.original.txnId;
+          return <TransactionStatusCell txnId={txnId} />;
+        },
+        header: () => <div className="text-center">Status</div>,
+      }),
+      columnHelper.accessor("reference", {
+        cell: info => (
+          <Link href={info.row.original.reference}>
+            <div className="min-w-[13rem] font-bold text-md text-center hover:text-blue-700">
+              {info.getValue().slice(0, 20) + "..."}
+            </div>
+          </Link>
+        ),
+        header: () => <div className="text-center">Reference</div>,
+      }),
+    ],
+    []
+  );
 
   const DataTableTransaction = useMemo(() => {
     if (!transactions) return [];
 
-    return transactions.map((item) => ({
+    return transactions.map(item => ({
       txnId: item.txnId || "",
       amount: item.valueToken || 0,
-      status: item.status || '',
-      reference: item.reference || '',
+      status: item.status || "",
+      reference: item.reference || "",
       transactionDate: new Date(item.createdAt).toLocaleDateString() || "",
     }));
   }, [transactions]);
@@ -94,10 +97,7 @@ export const TableUser = () => {
   return (
     <div className="p-5 space-y-4">
       <div>
-        <Table
-          data={currentItems}
-          columns={columns}
-        />
+        <Table data={currentItems} columns={columns} />
       </div>
 
       {DataTableTransaction.length > itemsPerPage && (
@@ -116,17 +116,17 @@ const TransactionStatusCell = ({ txnId }: { txnId: string }) => {
   const { statusText, error, signal } = usePaymentStatus(txnId);
 
   if (error) {
-    return (
-      <div className="text-red-500 text-center">
-        Error: {error}
-      </div>
-    );
+    return <div className="text-red-500 text-center">Error: {error}</div>;
   }
 
   return (
     <div className="min-w-[13rem] font-bold text-md capitalize text-center">
       {statusText ? (
-        <Badge variant={signal < 0 ? "destructive" : signal === 0 ? "warning" : "success"}>
+        <Badge
+          variant={
+            signal < 0 ? "destructive" : signal === 0 ? "warning" : "success"
+          }
+        >
           {statusText}
         </Badge>
       ) : (
@@ -135,4 +135,3 @@ const TransactionStatusCell = ({ txnId }: { txnId: string }) => {
     </div>
   );
 };
-

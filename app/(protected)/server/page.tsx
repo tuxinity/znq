@@ -8,7 +8,7 @@ const ServerPage = async () => {
     <div>
       <UserInfo label="💻 Server Component" user={user} />
     </div>
-  )
-}
+  );
+};
 
 export default ServerPage;

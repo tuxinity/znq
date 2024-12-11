@@ -1,17 +1,21 @@
-"use client"
+"use client";
 
-import Image from "next/image"
-import { useBalances } from '@/hooks/useBalance'
-import { Skeleton } from "@/components/ui/skeleton"
-import { useTokenPurchase } from '@/hooks/useTokenPurchase'
-import { ArrowDownCircle, ArrowUpCircle, Wallet } from 'lucide-react'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import Image from "next/image";
+import { useBalances } from "@/hooks/useBalance";
+import { Skeleton } from "@/components/ui/skeleton";
+import { useTokenPurchase } from "@/hooks/useTokenPurchase";
+import { ArrowDownCircle, ArrowUpCircle } from "lucide-react";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 
 export function UserBalanceCard() {
-  const address = "0x75C14a8d064641C2bC6c48B8781cD4df6Acc5420"
   const { isLoading: balancesLoading, balances } = useBalances();
-  const { tokenPrice, error, prevPrice, isLoading, } =
-    useTokenPurchase();
+  const { tokenPrice, error, prevPrice, isLoading } = useTokenPurchase();
 
   const priceChange =
     tokenPrice !== null && prevPrice !== null ? tokenPrice - prevPrice : null;
@@ -35,12 +39,6 @@ export function UserBalanceCard() {
     return (Number(balances.totalValueToken) * tokenPrice).toFixed(2);
   };
 
-
-
-  const formatAddress = (addr: string) => {
-    return `${addr.slice(0, 6)}...${addr.slice(-4)}`
-  }
-
   return (
     <Card className="bg-slate-800 text-white border-gray-700 w-full">
       <CardHeader>
@@ -52,7 +50,6 @@ export function UserBalanceCard() {
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4 sm:space-y-6">
-
         {isLoading ? (
           <Skeleton className="h-9 w-full bg-gray-400" />
         ) : error ? (
@@ -62,8 +59,9 @@ export function UserBalanceCard() {
             <div className="flex items-center justify-between">
               <div>
                 <p
-                  className={`text-2xl sm:text-3xl font-bold ${priceChange! >= 0 ? "text-green-500" : "text-red-500"
-                    }`}
+                  className={`text-2xl sm:text-3xl font-bold ${
+                    priceChange! >= 0 ? "text-green-500" : "text-red-500"
+                  }`}
                 >
                   {formatPrice(tokenPrice)}
                 </p>
@@ -73,8 +71,9 @@ export function UserBalanceCard() {
               </div>
               {priceChange !== null && (
                 <div
-                  className={`flex items-center ${priceChange >= 0 ? "text-green-500" : "text-red-500"
-                    }`}
+                  className={`flex items-center ${
+                    priceChange >= 0 ? "text-green-500" : "text-red-500"
+                  }`}
                 >
                   {priceChange >= 0 ? (
                     <ArrowUpCircle className="w-4 h-4 sm:w-5 sm:h-5 mr-1" />
@@ -89,17 +88,6 @@ export function UserBalanceCard() {
             </div>
           </>
         )}
-        <div>
-          {isLoading ? (
-            <Skeleton className="h-9 w-[200px]" />
-          ) : (
-            <div className="flex items-center space-x-2">
-              <Wallet className="h-4 w-4 text-muted-foreground" />
-              <span className="text-lg font-medium">{address && formatAddress(address)}</span>
-            </div>
-          )}
-          <div className="text-sm font-medium text-muted-foreground mb-1">Wallet Address</div>
-        </div>
         <div className="flex items-center space-x-2 sm:space-x-4">
           <div className="relative w-8 h-8 sm:w-12 sm:h-12">
             <Image
@@ -130,6 +118,5 @@ export function UserBalanceCard() {
         </div>
       </CardContent>
     </Card>
-  )
+  );
 }
-

@@ -60,6 +60,7 @@ export const { auth, handlers, signIn, signOut, unstable_update } = NextAuth({
       }
 
       if (session.user) {
+        session.user.walletAddress = token.walletAddress as string;
         session.user.name = token.name;
         session.user.email = token.email as string;
         session.user.isOAuth = token.isOAuth as boolean;
@@ -77,6 +78,7 @@ export const { auth, handlers, signIn, signOut, unstable_update } = NextAuth({
       const existingAccount = await getAccountByUserId(existingUser.id);
 
       token.isOAuth = !!existingAccount;
+      token.walletAddress = existingUser.walletAddress;
       token.name = existingUser.name;
       token.email = existingUser.email;
       token.role = existingUser.role;

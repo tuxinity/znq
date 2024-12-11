@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import React, { useMemo, useState } from "react";
 import { createColumnHelper } from "@tanstack/react-table";
@@ -8,10 +8,13 @@ import Table from "../ui/table";
 import { Badge } from "../ui/badge";
 import Pagination from "../pagination";
 import { usePaymentStatus } from "@/hooks/usePaymentStatus";
-import { TransactionProvider, useTransactions } from "@/context/TransactionContext";
+import {
+  TransactionProvider,
+  useTransactions,
+} from "@/context/TransactionContext";
 
 export interface IUserTransaction {
-  txhash: string
+  txhash: string;
   txnId: string;
   amount: number;
   status: string;
@@ -24,71 +27,75 @@ const columnHelper = createColumnHelper<IUserTransaction>();
 export const TableUserWithdraw = () => {
   const { withdrawals } = useTransactions();
 
-  const columns = useMemo(() => [
-    columnHelper.accessor("transactionDate", {
-      cell: info => (
-        <div className="min-w-[5rem] font-bold text-sm capitalize text-center">
-          {info.getValue()}
-        </div>
-      ),
-      header: () => <div>Date</div>,
-    }),
-    columnHelper.accessor("txnId", {
-      cell: info => (
-        <div className="min-w-[13rem] font-bold text-md capitalize text-center">
-          {info.getValue()}
-        </div>
-      ),
-      header: () => <div className="text-center">txnId</div>,
-    }),
-    columnHelper.accessor("amount", {
-      cell: info => (
-        <div className="min-w-[13rem] font-bold text-md capitalize text-center">
-          {info.getValue()}
-        </div>
-      ),
-      header: () => <div className="text-center">ZENQ Asset</div>,
-    }),
-    columnHelper.accessor("txhash", {
-      cell: info => (
-        <div className="min-w-[13rem] font-bold text-md capitalize text-center">
-          {info.getValue()}
-        </div>
-      ),
-      header: () => <div className="text-center">txhash</div>,
-    }),
-    columnHelper.accessor("status", {
-      cell: info => {
-        const txnId = info.row.original.txnId;
-        return <TransactionStatusCell txnId={txnId} />;
-      },
-      header: () => <div className="text-center">Status</div>,
-    }),
-    columnHelper.accessor("reference", {
-      cell: info => (
-        <Link href={info.row.original.reference}>
-          <div className="min-w-[13rem] font-bold text-md text-center hover:text-blue-700">
-            {info.getValue().slice(0, 20) + "..."}
+  const columns = useMemo(
+    () => [
+      columnHelper.accessor("transactionDate", {
+        cell: info => (
+          <div className="min-w-[5rem] font-bold text-sm capitalize text-center">
+            {info.getValue()}
           </div>
-        </Link>
-      ),
-      header: () => <div className="text-center">Reference</div>,
-    }),
-  ], []);
+        ),
+        header: () => <div>Date</div>,
+      }),
+      columnHelper.accessor("txnId", {
+        cell: info => (
+          <div className="min-w-[13rem] font-bold text-md capitalize text-center">
+            {info.getValue()}
+          </div>
+        ),
+        header: () => <div className="text-center">Payment ID</div>,
+      }),
+      columnHelper.accessor("amount", {
+        cell: info => (
+          <div className="min-w-[13rem] font-bold text-md capitalize text-center">
+            {info.getValue()}
+          </div>
+        ),
+        header: () => <div className="text-center">ZENQ Asset</div>,
+      }),
+      columnHelper.accessor("txhash", {
+        cell: info => (
+          <div className="min-w-[13rem] font-bold text-md capitalize text-center">
+            {info.getValue()}
+          </div>
+        ),
+        header: () => <div className="text-center">txhash</div>,
+      }),
+      columnHelper.accessor("status", {
+        cell: info => {
+          const txnId = info.row.original.txnId;
+          return <TransactionStatusCell txnId={txnId} />;
+        },
+        header: () => <div className="text-center">Status</div>,
+      }),
+      columnHelper.accessor("reference", {
+        cell: info => (
+          <Link href={info.row.original.reference}>
+            <div className="min-w-[13rem] font-bold text-md text-center hover:text-blue-700">
+              {info.getValue().slice(0, 20) + "..."}
+            </div>
+          </Link>
+        ),
+        header: () => <div className="text-center">Reference</div>,
+      }),
+    ],
+    []
+  );
 
   const DataTableTransaction = useMemo(() => {
     if (!withdrawals) return [];
 
-    return withdrawals.map((item) => ({
+    return withdrawals.map(item => ({
       txhash: item.txHash || "",
       txnId: item.txnId || "",
       amount: Number(item.value) || 0,
-      status: item.status || '',
-      reference: item.reference || '',
-      transactionDate: item.createdAt ? new Date(item.createdAt).toLocaleDateString() : "",
+      status: item.status || "",
+      reference: item.reference || "",
+      transactionDate: item.createdAt
+        ? new Date(item.createdAt).toLocaleDateString()
+        : "",
     }));
   }, [withdrawals]);
-
 
   const itemsPerPage = 10;
   const [currentPage, setCurrentPage] = useState(1);
@@ -105,10 +112,7 @@ export const TableUserWithdraw = () => {
   return (
     <div className="p-5 space-y-4">
       <div>
-        <Table
-          data={currentItems}
-          columns={columns}
-        />
+        <Table data={currentItems} columns={columns} />
       </div>
 
       {DataTableTransaction.length > itemsPerPage && (
@@ -127,17 +131,17 @@ const TransactionStatusCell = ({ txnId }: { txnId: string }) => {
   const { statusText, error, signal } = usePaymentStatus(txnId);
 
   if (error) {
-    return (
-      <div className="text-red-500 text-center">
-        Error: {error}
-      </div>
-    );
+    return <div className="text-red-500 text-center">Error: {error}</div>;
   }
 
   return (
     <div className="min-w-[13rem] font-bold text-md capitalize text-center">
       {statusText ? (
-        <Badge variant={signal < 0 ? "destructive" : signal === 0 ? "warning" : "success"}>
+        <Badge
+          variant={
+            signal < 0 ? "destructive" : signal === 0 ? "warning" : "success"
+          }
+        >
           {statusText}
         </Badge>
       ) : (
@@ -154,4 +158,3 @@ export default function AdminWithdrawPage() {
     </TransactionProvider>
   );
 }
-

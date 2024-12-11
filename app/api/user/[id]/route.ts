@@ -8,7 +8,10 @@ export async function PUT(req: NextRequest) {
   const id = segments[segments.length - 1]; // Extract the user ID from the URL
 
   if (!id) {
-    return NextResponse.json({ message: "User ID is required" }, { status: 400 });
+    return NextResponse.json(
+      { message: "User ID is required" },
+      { status: 400 }
+    );
   }
 
   try {
@@ -28,24 +31,33 @@ export async function PUT(req: NextRequest) {
 
     const { role } = user;
     if (user.id !== id && role !== "ADMIN") {
-      return NextResponse.json({ error: "Unauthorized. Only admins can update other users." }, { status: 403 });
+      return NextResponse.json(
+        { error: "Unauthorized. Only admins can update other users." },
+        { status: 403 }
+      );
     }
 
     const body = await req.json();
     const { addressWallet } = body;
 
     if (!addressWallet) {
-      return NextResponse.json({ error: "Invalid addressWallet" }, { status: 400 });
+      return NextResponse.json(
+        { error: "Invalid addressWallet" },
+        { status: 400 }
+      );
     }
 
     const updatedUser = await prisma.user.update({
       where: { id },
-      data: { addressWallet },
+      data: { walletAddress: addressWallet },
     });
 
     return NextResponse.json(updatedUser, { status: 200 });
   } catch (error) {
     console.error(error);
-    return NextResponse.json({ message: "Internal Server Error" }, { status: 500 });
+    return NextResponse.json(
+      { message: "Internal Server Error" },
+      { status: 500 }
+    );
   }
 }
