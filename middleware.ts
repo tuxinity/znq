@@ -7,6 +7,7 @@ import {
   DEFAULT_LOGIN_REDIRECT,
   authRoutes,
 } from "@/routes";
+import { NextResponse } from "next/server";
 
 const { auth } = NextAuth(authConfig);
 
@@ -18,6 +19,10 @@ export default auth(req => {
   const isApiAuthRoute = nextUrl.pathname.startsWith(apiAuthPrefix);
   const isPublicRoute = publicRoutes.includes(nextUrl.pathname);
   const isAuthRoute = authRoutes.includes(nextUrl.pathname);
+
+  if (nextUrl.pathname === "/") {
+    return NextResponse.redirect(new URL("/dashboard", req.url));
+  }
 
   if (isApiAuthRoute) {
     return null;

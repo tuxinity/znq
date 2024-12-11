@@ -11,11 +11,12 @@ import { usePaymentStatus } from "@/hooks/usePaymentStatus";
 import { TransactionProvider, useTransactions } from "@/context/TransactionContext";
 
 export interface IUserTransaction {
+  txhash: string
   txnId: string;
-  transactionDate: string;
   amount: number;
   status: string;
   reference: string;
+  transactionDate: string;
 }
 
 const columnHelper = createColumnHelper<IUserTransaction>();
@@ -48,6 +49,14 @@ export const TableUserWithdraw = () => {
       ),
       header: () => <div className="text-center">ZENQ Asset</div>,
     }),
+    columnHelper.accessor("txhash", {
+      cell: info => (
+        <div className="min-w-[13rem] font-bold text-md capitalize text-center">
+          {info.getValue()}
+        </div>
+      ),
+      header: () => <div className="text-center">txhash</div>,
+    }),
     columnHelper.accessor("status", {
       cell: info => {
         const txnId = info.row.original.txnId;
@@ -69,8 +78,9 @@ export const TableUserWithdraw = () => {
 
   const DataTableTransaction = useMemo(() => {
     if (!withdrawals) return [];
-  
+
     return withdrawals.map((item) => ({
+      txhash: item.txHash || "",
       txnId: item.txnId || "",
       amount: Number(item.value) || 0,
       status: item.status || '',
@@ -78,7 +88,7 @@ export const TableUserWithdraw = () => {
       transactionDate: item.createdAt ? new Date(item.createdAt).toLocaleDateString() : "",
     }));
   }, [withdrawals]);
-  
+
 
   const itemsPerPage = 10;
   const [currentPage, setCurrentPage] = useState(1);
@@ -138,10 +148,10 @@ const TransactionStatusCell = ({ txnId }: { txnId: string }) => {
 };
 
 export default function AdminWithdrawPage() {
-    return (
-      <TransactionProvider>
-        <TableUserWithdraw />
-      </TransactionProvider>
-    );
-  }
+  return (
+    <TransactionProvider>
+      <TableUserWithdraw />
+    </TransactionProvider>
+  );
+}
 
