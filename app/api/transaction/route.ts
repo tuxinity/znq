@@ -1,6 +1,7 @@
 import { db } from "@/lib/db";
 import { auth } from "@/auth";
 import { NextRequest, NextResponse } from "next/server";
+import { TransactionStatus, TransactionType } from "@prisma/client";
 
 export async function GET(request: NextRequest) {
   try {
@@ -11,8 +12,15 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
     }
 
+    const isAdmin = session.user.role === "ADMIN";
+
     const whereClause = {
       userId: session.user.id,
+    };
+
+    const whereClauseCount = {
+      status: TransactionStatus.SUCCESS,
+      type: TransactionType.DEPOSIT,
     };
 
     const searchParams = request.nextUrl.searchParams;
@@ -22,6 +30,15 @@ export async function GET(request: NextRequest) {
     const totalRecords = await db.transaction.count({ where: whereClause });
 
     const totalPages = Math.ceil(totalRecords / limit);
+
+    const totalTransactionValue = isAdmin
+      ? await db.transaction.aggregate({
+          _sum: {
+            value: true,
+          },
+          where: whereClauseCount,
+        })
+      : null;
 
     const transactions = await db.transaction.findMany({
       where: whereClause,
@@ -43,6 +60,7 @@ export async function GET(request: NextRequest) {
       transactions,
       totalPages,
       currentPage: page,
+      ...(isAdmin && { totalTransactionValue: totalTransactionValue?._sum.value }), 
     });
   } catch (error) {
     console.error("Transactions Route Error:", error);

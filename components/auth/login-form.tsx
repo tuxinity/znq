@@ -22,6 +22,7 @@ import { LoginSchema } from "@/schemas";
 import { FormError } from "../form-error";
 import { CardWrapper } from "./card-wrapper";
 import { FormSuccess } from "../form-success";
+import { Eye, EyeOff } from "lucide-react";
 
 export const LoginForm = () => {
   const searchParams = useSearchParams();
@@ -33,6 +34,7 @@ export const LoginForm = () => {
   const [showTwoFactor, setShowTwoFactor] = useState(false);
   const [error, setError] = useState<string | undefined>("");
   const [success, setSuccess] = useState<string | undefined>("");
+  const [showPassword, setShowPassword] = useState<boolean>(false)
   const [isPending, startTransition] = useTransition();
   const form = useForm<z.infer<typeof LoginSchema>>({
     resolver: zodResolver(LoginSchema),
@@ -41,6 +43,8 @@ export const LoginForm = () => {
       password: "",
     },
   });
+
+  const icon = showPassword ? <Eye/> : <EyeOff/>
 
   const onSubmit = (values: z.infer<typeof LoginSchema>) => {
     setError("");
@@ -123,12 +127,20 @@ export const LoginForm = () => {
                     <FormItem>
                       <FormLabel>Password</FormLabel>
                       <FormControl>
-                        <Input
-                          disabled={isPending}
-                          placeholder="******"
-                          type="password"
-                          {...field}
-                        />
+                      <div className="relative">
+                      <Input
+                        disabled={isPending}
+                        placeholder="******"
+                        type={showPassword === true ? "text" : "password"}
+                        {...field}
+                      />
+                      <div
+                        className="absolute inset-y-0 right-3 flex items-center cursor-pointer"
+                        onClick={() => setShowPassword(!showPassword)}
+                      >
+                        {icon}
+                      </div>
+                    </div>
                       </FormControl>
                       <Button
                         size="sm"

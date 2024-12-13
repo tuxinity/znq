@@ -56,8 +56,8 @@ export function DepositInfo() {
     <div className="mx-auto p-4 sm:p-6 md:p-5 mt-4 sm:mt-6 md:mt-10">
       <div className="grid gap-4 sm:gap-5 md:gap-6 grid-cols-1 md:grid-cols-3">
         <UserBalanceCard />
-
-        <Card className="md:col-span-2 bg-slate-800 text-white border-gray-700 w-full">
+        {user?.role === "ADMIN" ? null :
+          <Card className="md:col-span-2 bg-slate-800 text-white border-gray-700 w-full">
           <CardHeader>
             <CardTitle className="text-lg sm:text-2xl font-bold">
               Withdraw Funds
@@ -131,7 +131,8 @@ export function DepositInfo() {
               {isLoading ? "Processing..." : "Withdraw ZENQ"}
             </Button>
           </CardFooter>
-        </Card>
+          </Card>
+        }
       </div>
       {showToast && (
         <CustomToast

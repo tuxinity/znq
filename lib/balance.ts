@@ -15,7 +15,7 @@ export const getUserBalance = async (email: string): Promise<number> => {
       where: {
         userId: user.id,
         type: "DEPOSIT",
-        // status: "SUCCESS", 
+        status: "SUCCESS", 
       },
     });
 
