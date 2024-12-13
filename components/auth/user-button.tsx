@@ -26,7 +26,6 @@ import {
 export const UserButton = () => {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const { user, isLoading } = useCurrentUser();
-
   return (
     <>
       <DropdownMenu>
