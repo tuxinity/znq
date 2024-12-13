@@ -2,7 +2,6 @@
 
 import React, { useMemo, useState } from "react";
 import { createColumnHelper } from "@tanstack/react-table";
-
 // import Link from "next/link";
 import Table from "../ui/table";
 import Pagination from "../pagination";
@@ -11,6 +10,8 @@ import { ModalWithdraw } from "../withdraw/modal-transaction";
 import { Input } from "../ui";
 import { Search } from "lucide-react";
 import { IUserTransaction } from "@/constant/userTransaction";
+import { toast } from "sonner";
+import { Copy } from "lucide-react";
 
 
 const columnHelper = createColumnHelper<IUserTransaction>();
@@ -24,6 +25,19 @@ export const TableAdminWithdraw = () => {
     setModalOpen(true);
   };
 
+  const handleCopy = (item: string) => {
+    navigator.clipboard.writeText(item)
+      .then(() =>
+        toast.success("address wallet copied"))
+  }
+
+  const shortenValue = (value: string) => {
+    if (value.length > 12) {
+      return `${value.slice(0, 6)}...${value.slice(-4)}`;
+    }
+    return value;
+  }
+
   const columns = useMemo(() => [
     columnHelper.accessor("transactionDate", {
       cell: info => (
@@ -34,19 +48,48 @@ export const TableAdminWithdraw = () => {
       header: () => <div>Date</div>,
     }),
     columnHelper.accessor("email", {
-      cell: info => (
-        <div className="min-w-[5rem] font-bold text-sm capitalize text-center">
-          {info.getValue()}
-        </div>
-      ),
+      cell: info => {
+        const emailVal = info.getValue()
+        return (
+          <div className="min-w-[5rem] font-bold text-sm capitalize text-center">
+            {shortenValue(emailVal)}
+          </div>
+        )
+      },
       header: () => <div>user</div>,
     }),
+    columnHelper.accessor("addressWallet", {
+      cell: info => {
+        const addressWallet = info.getValue();
+        return (
+          <div className="min-w-[5rem] font-bold text-sm capitalize text-center relative">
+            <button
+              onClick={() => handleCopy(addressWallet as string)}
+              className="focus:outline-none text-purple-700 hover:text-purple-800 dark:text-purple-500 dark:hover:text-purple-400 flex items-center justify-center"
+            >
+              {shortenValue(addressWallet as string)}
+              <sup className="ml-1">
+                <Copy
+                  size={16}
+                  className="cursor-pointer hover:text-purple-800 dark:hover:text-purple-400"
+                  aria-label="Copy wallet address"
+                />
+              </sup>
+            </button>
+          </div>
+        );
+      },
+      header: () => <div>Address Wallet</div>,
+    }),
     columnHelper.accessor("txHash", {
-      cell: info => (
-        <div className="min-w-[13rem] font-bold text-md capitalize text-center">
-          {info.getValue()}
-        </div>
-      ),
+      cell: info => {
+        const txVal = info.getValue();
+        return (
+          <div className="min-w-[13rem] font-bold text-md capitalize text-center">
+            {shortenValue(txVal as string)}
+          </div>
+        )
+      },
       header: () => <div className="text-center">txHash</div>,
     }),
     columnHelper.accessor("amount", {
@@ -86,7 +129,7 @@ export const TableAdminWithdraw = () => {
 
     return withdrawals.map((item) => ({
       id: item.id || "",
-      txnId: item.txnId || "",
+      addressWallet: item.user?.walletAddress,
       txHash: item.txHash || "",
       email: item.user?.email || "N/A",
       value: item.value || "",
@@ -128,7 +171,10 @@ export const TableAdminWithdraw = () => {
         </div>
       </div>
       <div>
+
         <Table
+          // eslint-disable-next-line
+          // @ts-expect-error
           data={currentItems}
           columns={columns}
         />

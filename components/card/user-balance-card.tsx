@@ -12,10 +12,16 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { useTransactions } from "@/hooks/useTransactions";
+import { useFetchUsers } from "@/hooks/useUsers";
+import { useCurrentUser } from "@/hooks/useCurrentUser";
 
 export function UserBalanceCard() {
+  const user = useCurrentUser();
   const { isLoading: balancesLoading, balances } = useBalances();
   const { tokenPrice, error, prevPrice, isLoading } = useTokenPurchase();
+  const { omzet } = useTransactions();
+  const { totalUser } = useFetchUsers(1, 10);
 
   const priceChange =
     tokenPrice !== null && prevPrice !== null ? tokenPrice - prevPrice : null;
@@ -88,14 +94,15 @@ export function UserBalanceCard() {
             </div>
           </>
         )}
-        <div className="flex items-center space-x-2 sm:space-x-4">
+        <div className="flex items-center justify-between ">
+          <div className="flex flex-row space-x-2 sm:space-x-4 item-center">
           <div className="relative w-8 h-8 sm:w-12 sm:h-12">
             <Image
               src="/zenq.svg"
               alt="ZENQ token"
               fill
               sizes="(max-width: 640px) 32px, 48px"
-              className="object-contain"
+              className="object-contain mt-5"
               priority
             />
           </div>
@@ -104,18 +111,34 @@ export function UserBalanceCard() {
               <Skeleton className="h-9 w-[120px] bg-gray-400" />
             ) : (
               <p className="text-xl sm:text-2xl font-bold">
-                {formatPrice(balances?.totalValueToken ?? 0)}
+                {user?.role === "ADMIN" ? formatPrice(omzet ?? 0) : formatPrice(balances?.totalValueToken ?? 0)}
               </p>
             )}
 
             <p className="text-xs sm:text-sm text-muted-foreground">
-              ZENQ Balance
+              {user?.role === "ADMIN" ?
+                "Total ZENQ Omzet"
+              :
+                "ZENQ Balance"
+              }
             </p>
             <p className="text-xs sm:text-sm text-muted-foreground text-white">
               ≈ {calculateTokenAmount()} USDT
             </p>
           </div>
+          </div>
+          {user?.role === "ADMIN" && (
+          <div className="flex flex-col items-center sm:items-start space-y-2 ml-10">
+            <h1 className="text-lg sm:text-2xl font-semibold text-white">
+              {totalUser}
+            </h1>
+            <p className="text-md font-bold text-white">
+              Total User
+            </p>
+          </div>
+        )}
         </div>
+        
       </CardContent>
     </Card>
   );

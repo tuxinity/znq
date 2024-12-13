@@ -37,6 +37,7 @@ export async function GET(req: NextRequest) {
         user: {
           select: {
             email: true,
+            walletAddress: true
           },
         },
       },

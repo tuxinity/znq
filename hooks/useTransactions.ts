@@ -21,6 +21,7 @@ interface UseTransactionsHook {
   error: Error | null;
   totalPages: number;
   currentPage: number;
+  omzet: number;
   refetch: (page?: number) => void;
 }
 
@@ -35,6 +36,7 @@ export const useTransactions = (
   const [page, setPage] = useState<number>(initialPage);
   const [totalPages, setTotalPages] = useState<number>(0);
   const [currentPage, setCurrentPage] = useState<number>(initialPage);
+  const [omzet, setOmzet] = useState<number>(0);
 
   const fetchTransactions = async (pageToFetch: number = page) => {
     if (!session?.user) {
@@ -61,6 +63,7 @@ export const useTransactions = (
       setTotalPages(data.totalPages);
       setCurrentPage(data.currentPage);
       setPage(data.currentPage);
+      setOmzet(data.totalRecordTransaction)
       setError(null);
     } catch (err) {
       setError(err instanceof Error ? err : new Error('An unknown error occurred'));
@@ -87,6 +90,7 @@ export const useTransactions = (
     error,
     totalPages,
     currentPage,
+    omzet,
     refetch,
   };
 };
