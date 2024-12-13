@@ -23,14 +23,15 @@ import { useSession } from "next-auth/react";
 import { settings } from "@/actions/settings";
 // import { Switch } from "@/components/ui/switch";
 import { FormSuccess } from "@/components/form-success";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { RoleGate } from "./role-gate";
+// import {
+//   Select,
+//   SelectContent,
+//   SelectItem,
+//   SelectTrigger,
+//   SelectValue,
+// } from "@/components/ui/select";
+// import { RoleGate } from "./role-gate";
+// import { Switch } from "@/components/ui/switch";
 
 export function SettingsForm() {
   const { user } = useCurrentUser();
@@ -76,7 +77,7 @@ export function SettingsForm() {
     <Form {...form}>
       <form className="space-y-6" onSubmit={form.handleSubmit(onSubmit)}>
         <div className="space-y-4">
-          <FormField
+          {/* <FormField
             control={form.control}
             name="name"
             render={({ field }) => (
@@ -92,7 +93,7 @@ export function SettingsForm() {
                 <FormMessage />
               </FormItem>
             )}
-          />
+          /> */}
           <FormField
             control={form.control}
             name="walletAddress"
@@ -164,7 +165,7 @@ export function SettingsForm() {
               />
             </>
           )} */}
-          <RoleGate allowedRole={UserRole.ADMIN}>
+          {/* <RoleGate allowedRole={UserRole.ADMIN}>
             <FormField
               control={form.control}
               name="role"
@@ -191,7 +192,7 @@ export function SettingsForm() {
                 </FormItem>
               )}
             />
-          </RoleGate>
+          </RoleGate> */}
           {/* {!user.isOAuth && (
             <FormField
               control={form.control}

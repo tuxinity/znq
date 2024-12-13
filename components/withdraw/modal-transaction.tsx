@@ -59,6 +59,15 @@ export const ModalWithdraw = ({ onClose, transaction }: ModalProps) => {
             </div>
             <div>
               <label
+                htmlFor="status"
+                className="block text-sm font-medium text-gray-700 dark:text-gray-300"
+              >
+                Address Wallet
+              </label>
+              <span>{currentTransaction?.addressWallet}</span>
+            </div>
+            <div>
+              <label
                 htmlFor="value"
                 className="block text-sm font-medium text-gray-700 dark:text-gray-300"
               >

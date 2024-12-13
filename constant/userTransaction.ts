@@ -4,8 +4,10 @@ export interface IUserTransaction {
     txnId: string;
     txHash?: string; 
     email: string;
+    addressWallet?: string;
     user?: {
       email: string;
+      walletAddress: string;
     }; 
     transactionDate: string; 
     amount: number; 
