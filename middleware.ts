@@ -48,12 +48,9 @@ export default auth(req => {
   }
 
   if (nextUrl.pathname === "/dashboard/admin") {
-    if (!isLoggedIn) {
-      return NextResponse.redirect(new URL("/auth/login", nextUrl));
-    }
-
-    if (!UserRole.ADMIN) {
-      return NextResponse.redirect(new URL(`/dashboard`, nextUrl));
+    const session = req.auth;
+    if (!session || session.user.role !== UserRole.ADMIN) {
+      return NextResponse.redirect(new URL("/dashboard", req.url));
     }
   }
 

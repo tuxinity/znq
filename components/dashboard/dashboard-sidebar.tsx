@@ -19,7 +19,7 @@ const navItems = [
 
 export function DashboardSidebar() {
   const pathname = usePathname();
-  const user = useCurrentUser();
+  const { user } = useCurrentUser();
 
   const filteredNavItems = navItems.filter(
     item => !item.adminOnly || user?.role === UserRole.ADMIN

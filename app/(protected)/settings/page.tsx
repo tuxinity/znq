@@ -10,7 +10,7 @@ import { useSession } from "next-auth/react";
 import { settings } from "@/actions/settings";
 import { useState, useTransition } from "react";
 import { Button, Input } from "@/components/ui";
-import { Switch } from "@/components/ui/switch";
+// import { Switch } from "@/components/ui/switch";
 import { FormError } from "@/components/form-error";
 import { useCurrentUser } from "@/hooks/useCurrentUser";
 import { FormSuccess } from "@/components/form-success";
@@ -22,18 +22,18 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-  FormDescription,
+  // FormDescription,
 } from "@/components/ui/form";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue
-} from "@/components/ui/select"
+  SelectValue,
+} from "@/components/ui/select";
 
 const SettingsPage = () => {
-  const user = useCurrentUser();
+  const { user } = useCurrentUser();
 
   const [error, setError] = useState<string | undefined>();
   const [success, setSuccess] = useState<string | undefined>();
@@ -55,7 +55,7 @@ const SettingsPage = () => {
   const onSubmit = (values: z.infer<typeof SettingsSchema>) => {
     startTransition(() => {
       settings(values)
-        .then((data) => {
+        .then(data => {
           if (data.error) {
             setError(data.error);
           }
@@ -88,13 +88,17 @@ const SettingsPage = () => {
                   <FormItem>
                     <FormLabel>Name</FormLabel>
                     <FormControl>
-                      <Input {...field} placeholder="Zenqira" disabled={isPending} />
+                      <Input
+                        {...field}
+                        placeholder="Zenqira"
+                        disabled={isPending}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
-              {!user.isOAuth && (
+              {/* {!user.isOAuth && (
                 <>
                   <FormField
                     control={form.control}
@@ -103,7 +107,12 @@ const SettingsPage = () => {
                       <FormItem>
                         <FormLabel>Email</FormLabel>
                         <FormControl>
-                          <Input {...field} placeholder="zeqira@example" type="email" disabled={isPending} />
+                          <Input
+                            {...field}
+                            placeholder="zeqira@example"
+                            type="email"
+                            disabled={isPending}
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -116,7 +125,12 @@ const SettingsPage = () => {
                       <FormItem>
                         <FormLabel>Current Password</FormLabel>
                         <FormControl>
-                          <Input {...field} placeholder="******" type="password" disabled={isPending} />
+                          <Input
+                            {...field}
+                            placeholder="******"
+                            type="password"
+                            disabled={isPending}
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -129,14 +143,19 @@ const SettingsPage = () => {
                       <FormItem>
                         <FormLabel>New Password</FormLabel>
                         <FormControl>
-                          <Input {...field} placeholder="******" type="password" disabled={isPending} />
+                          <Input
+                            {...field}
+                            placeholder="******"
+                            type="password"
+                            disabled={isPending}
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
                     )}
                   />
                 </>
-              )}
+              )} */}
               <FormField
                 control={form.control}
                 name="role"
@@ -155,19 +174,15 @@ const SettingsPage = () => {
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        <SelectItem value={UserRole.ADMIN}>
-                          Admin
-                        </SelectItem>
-                        <SelectItem value={UserRole.USER}>
-                          User
-                        </SelectItem>
+                        <SelectItem value={UserRole.ADMIN}>Admin</SelectItem>
+                        <SelectItem value={UserRole.USER}>User</SelectItem>
                       </SelectContent>
                     </Select>
                     <FormMessage />
                   </FormItem>
                 )}
               />
-              {!user.isOAuth && (
+              {/* {!user.isOAuth && (
                 <FormField
                   control={form.control}
                   name="isTwoFactorEnabled"
@@ -189,7 +204,7 @@ const SettingsPage = () => {
                     </FormItem>
                   )}
                 />
-              )}
+              )} */}
             </div>
             <FormError message={error} />
             <FormSuccess message={success} />
@@ -204,4 +219,3 @@ const SettingsPage = () => {
 };
 
 export default SettingsPage;
-

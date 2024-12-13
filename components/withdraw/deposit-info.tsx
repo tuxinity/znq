@@ -21,7 +21,7 @@ import { useCurrentUser } from "@/hooks/useCurrentUser";
 import { FormError } from "../form-error";
 
 export function DepositInfo() {
-  const user = useCurrentUser();
+  const { user } = useCurrentUser();
   const [amount, setAmount] = useState("");
   const { tokenPrice, error, isLoading, buyError } = useTokenPurchase();
   const { postWithdrawal, success, response, loading, refetch } =

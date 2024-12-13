@@ -1,16 +1,14 @@
-"use client"
+"use client";
 
 import { UserInfo } from "@/components/user-info";
-import { useCurrentUser } from "@/hooks/useCurrentUser";
+// import { useCurrentUser } from "@/hooks/useCurrentUser";
 
 const ClientPage = () => {
-  const user = useCurrentUser();
-
   return (
     <div>
-      <UserInfo label="💻 Client Component" user={user} />
+      <UserInfo label="💻 Client Component" />
     </div>
-  )
-}
+  );
+};
 
 export default ClientPage;

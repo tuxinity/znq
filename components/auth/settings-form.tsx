@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
-  FormDescription,
+  // FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -21,7 +21,7 @@ import { SettingsSchema } from "@/schemas";
 import { UserRole } from "@prisma/client";
 import { useSession } from "next-auth/react";
 import { settings } from "@/actions/settings";
-import { Switch } from "@/components/ui/switch";
+// import { Switch } from "@/components/ui/switch";
 import { FormSuccess } from "@/components/form-success";
 import {
   Select,
@@ -33,7 +33,7 @@ import {
 import { RoleGate } from "./role-gate";
 
 export function SettingsForm() {
-  const user = useCurrentUser();
+  const { user } = useCurrentUser();
   const [error, setError] = useState<string | undefined>();
   const [success, setSuccess] = useState<string | undefined>();
   const { update } = useSession();
@@ -106,7 +106,7 @@ export function SettingsForm() {
               </FormItem>
             )}
           />
-          {!user.isOAuth && (
+          {/* {!user.isOAuth && (
             <>
               <FormField
                 control={form.control}
@@ -163,7 +163,7 @@ export function SettingsForm() {
                 )}
               />
             </>
-          )}
+          )} */}
           <RoleGate allowedRole={UserRole.ADMIN}>
             <FormField
               control={form.control}
@@ -192,7 +192,7 @@ export function SettingsForm() {
               )}
             />
           </RoleGate>
-          {!user.isOAuth && (
+          {/* {!user.isOAuth && (
             <FormField
               control={form.control}
               name="isTwoFactorEnabled"
@@ -215,7 +215,7 @@ export function SettingsForm() {
                 </FormItem>
               )}
             />
-          )}
+          )} */}
         </div>
         <FormError message={error} />
         <FormSuccess message={success} />
