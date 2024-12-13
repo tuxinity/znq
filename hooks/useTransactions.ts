@@ -63,7 +63,7 @@ export const useTransactions = (
       setTotalPages(data.totalPages);
       setCurrentPage(data.currentPage);
       setPage(data.currentPage);
-      setOmzet(data.totalRecordTransaction)
+      setOmzet(data.totalTransactionValue)
       setError(null);
     } catch (err) {
       setError(err instanceof Error ? err : new Error('An unknown error occurred'));

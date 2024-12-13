@@ -158,7 +158,8 @@ export const TableAdminWithdraw = () => {
 
   return (
     <div className="p-5 space-y-4">
-      <div className="flex flex-row gap-5 justify-end ps-1.5 my-4">
+      <div className="flex flex-row gap-5 justify-between ps-1.5 my-4">
+        <h2 className="text-white text-2xl font-bold">Withdrawals Request</h2>
         <div className="relative sm:block">
           <Search className="absolute top-5 -translate-y-1/2 start-3 text-black dark:text-white" />
           <Input
