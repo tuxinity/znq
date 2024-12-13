@@ -5,7 +5,7 @@ import Link from "next/link";
 import { login } from "@/actions/login";
 import { useForm } from "react-hook-form";
 import { useState, useTransition } from "react";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import {
@@ -25,6 +25,7 @@ import { FormSuccess } from "../form-success";
 
 export const LoginForm = () => {
   const searchParams = useSearchParams();
+  const router = useRouter();
   const urlError =
     searchParams.get("error") === "OAuthAccountNotLinked"
       ? "Email already in use with different provider!"
@@ -45,21 +46,24 @@ export const LoginForm = () => {
     setError("");
     setSuccess("");
     startTransition(() => {
-      login(values).then(data => {
-        if (data?.error) {
-          form.reset()
-          setError(data?.error)
-        }
+      login(values)
+        .then(data => {
+          if (data?.error) {
+            form.reset();
+            setError(data.error);
+          }
 
-        if (data?.success) {
-          form.reset()
-          setSuccess(data.success)
-        }
+          if (data?.success) {
+            form.reset();
+            setSuccess(data.success);
+            router.refresh();
+          }
 
-        if (data?.twoFactor) {
-          setShowTwoFactor(true)
-        }
-      }).catch(() => setError("Something went wrong"))
+          if (data?.twoFactor) {
+            setShowTwoFactor(true);
+          }
+        })
+        .catch(() => setError("Something went wrong"));
     });
   };
 
@@ -103,7 +107,7 @@ export const LoginForm = () => {
                       <FormControl>
                         <Input
                           disabled={isPending}
-                          placeholder="john.dowen@example.com"
+                          placeholder="john.doe@example.com"
                           type="email"
                           {...field}
                         />
@@ -139,8 +143,7 @@ export const LoginForm = () => {
                   )}
                 />
               </>
-            )
-            }
+            )}
           </div>
           <FormError message={error || urlError} />
           <FormSuccess message={success} />

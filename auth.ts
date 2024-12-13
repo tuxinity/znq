@@ -3,11 +3,11 @@ import NextAuth from "next-auth";
 import authConfig from "./auth.config";
 import { getUserById } from "./data/user";
 import { UserRole } from "@prisma/client";
+import { getAccountByUserId } from "./data/account";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import { getTwoFactorConfirmationByUserId } from "@/data/two-factor-confirmation";
-import { getAccountByUserId } from "./data/account";
 
-export const { auth, handlers, signIn, signOut, unstable_update } = NextAuth({
+export const { handlers, auth, signIn, signOut, unstable_update } = NextAuth({
   pages: {
     signIn: "/auth/login",
     error: "/auth/error",
@@ -24,12 +24,10 @@ export const { auth, handlers, signIn, signOut, unstable_update } = NextAuth({
   },
   callbacks: {
     async signIn({ user, account }) {
-      //allow OAuth without email verificattion
       if (account?.provider !== "credentials") return true;
 
       const existingUser = await getUserById(user.id || "");
 
-      //Prevent sign in without email verification
       if (!existingUser?.emailVerified) return false;
 
       if (existingUser.isTwoFactorEnabled) {
@@ -46,6 +44,7 @@ export const { auth, handlers, signIn, signOut, unstable_update } = NextAuth({
 
       return true;
     },
+
     async session({ token, session }) {
       if (token.sub && session.user) {
         session.user.id = token.sub;
@@ -57,9 +56,6 @@ export const { auth, handlers, signIn, signOut, unstable_update } = NextAuth({
 
       if (session.user) {
         session.user.isTwoFactorEnabled = token.isTwoFactorEnabled as boolean;
-      }
-
-      if (session.user) {
         session.user.walletAddress = token.walletAddress as string;
         session.user.name = token.name;
         session.user.email = token.email as string;

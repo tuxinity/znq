@@ -15,9 +15,9 @@ export const RoleGate = ({
   allowedRole,
   showMessage = false,
 }: RoleGateProps) => {
-  const role = useCurrentUser();
+  const { user } = useCurrentUser();
 
-  if (role?.role !== allowedRole) {
+  if (user?.role !== allowedRole) {
     if (showMessage) {
       return (
         <FormError message="You dont have permission to view this content!" />
