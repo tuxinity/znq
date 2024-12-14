@@ -1,6 +1,5 @@
 "use client";
 
-import { CustomToast } from "./toast";
 import { DollarSign, Wallet } from "lucide-react";
 import { UserBalanceCard } from "../card";
 import { useEffect, useState } from "react";
@@ -19,15 +18,14 @@ import {
 import { Skeleton } from "../ui/skeleton";
 import { useCurrentUser } from "@/hooks/useCurrentUser";
 import { FormError } from "../form-error";
+import {toast} from "sonner";
 
 export function DepositInfo() {
   const { user } = useCurrentUser();
   const [amount, setAmount] = useState("");
   const { tokenPrice, error, isLoading, buyError } = useTokenPurchase();
-  const { postWithdrawal, success, response, loading, refetch } =
+  const { postWithdrawal, error: withdrawError, success, loading, refetch } =
     useTransactions();
-  const [showToast, setShowToast] = useState<boolean>(false);
-  const [toastMessage, setToastMessage] = useState<string>("");
 
   const calculateTokenAmount = () => {
     if (!amount || !tokenPrice) return "0";
@@ -41,16 +39,15 @@ export function DepositInfo() {
 
   useEffect(() => {
     if (success) {
-      setToastMessage("Withdraw Requested!");
-      setShowToast(true);
-      setAmount("");
       refetch();
-    } else {
-      setToastMessage(response?.error || "Error occurred");
-      setShowToast(true);
       setAmount("");
+      toast.success("Withdraw Requested!")
+    } 
+    if(withdrawError !== null) {
+      setAmount("");
+      toast.error(withdrawError || "Error occurred");
     }
-  }, [success]);
+  }, [withdrawError, success]);
 
   return (
     <div className="mx-auto p-4 sm:p-6 md:p-5 mt-4 sm:mt-6 md:mt-10">
@@ -134,13 +131,6 @@ export function DepositInfo() {
           </Card>
         }
       </div>
-      {showToast && (
-        <CustomToast
-          status={success ? "success" : "error"}
-          message={toastMessage}
-          onClose={() => setShowToast(false)}
-        />
-      )}
     </div>
   );
 }

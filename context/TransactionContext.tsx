@@ -99,11 +99,12 @@ export const TransactionProvider: React.FC<{ children: React.ReactNode }> = ({ c
         body: JSON.stringify({ amount }),
       });
 
-      if (!response.ok) {
-        throw new Error('Failed to create withdrawal request');
-      }
-
       const data = await response.json();
+      if (!response.ok || data.error) {
+        const errorMessage = data.error;
+        setError(errorMessage)
+      }
+  
       setResponse(data);
       if (data.id) {
         setSuccess(true);
@@ -119,7 +120,7 @@ export const TransactionProvider: React.FC<{ children: React.ReactNode }> = ({ c
     await postWithdrawal(amount);
     if (success) {
       await fetchWithdrawals();
-    }
+    } 
   };
 
   React.useEffect(() => {
