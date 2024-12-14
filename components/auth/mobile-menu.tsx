@@ -21,9 +21,8 @@ export const MobileMenu = () => {
     item => !item.adminOnly || user?.role === UserRole.ADMIN
   );
 
-
   return (
-    <div className="md:hidden flex items-center">
+    <div className={`items-center ${user?.role === UserRole.ADMIN ? "hidden" : "flex md:hidden"}`}>
       <DropdownMenu>
         <DropdownMenuTrigger>
           <HamburgerMenuIcon color="white" width={32} height={24} />
