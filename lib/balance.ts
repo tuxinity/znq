@@ -21,7 +21,7 @@ export const getUserBalance = async (email: string): Promise<number> => {
 
     
     const totalBalance = depositTransactions.reduce(
-      (acc, tx) => acc + (tx.value || 0), 
+      (acc, tx) => acc + (tx.valueToken || 0), 
       0
     );
 

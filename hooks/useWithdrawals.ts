@@ -30,11 +30,14 @@ export const usePostWithdrawal = (): UsePostWithdrawalResponse => {
         body: JSON.stringify({ amount }),
       });
 
-      if (!response.ok) {
+      const data = await response.json();
+
+      if (!response.ok || data.error) {
+        const errorMessage = data.error;
+        setError(errorMessage)
         throw new Error('Failed to create withdrawal request');
       }
-
-      const data = await response.json();
+      
       setResponse(data)
       if (data.id) {
         setSuccess(true);

@@ -87,7 +87,6 @@ export async function POST(req: NextRequest) {
 
       return NextResponse.json(wd, { status: 201 });
     } catch (error) {
-      // console.error("Error approve withdrawal:", error);
       return NextResponse.json(
         { error: `Failed to approve withdrawal: ${error}` },
         { status: 500 }
@@ -114,11 +113,11 @@ export async function POST(req: NextRequest) {
           userId: id,
           txnId: "",
           txHash: "",
-          value: amount,
+          value: 0,
           type: "WITHDRAW",
           status: "PENDING",
           reference: "",
-          valueToken: 0,
+          valueToken: amount,
         },
       });
 

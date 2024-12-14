@@ -37,14 +37,6 @@ export const TableUserWithdraw = () => {
         ),
         header: () => <div>Date</div>,
       }),
-      columnHelper.accessor("txnId", {
-        cell: info => (
-          <div className="min-w-[13rem] font-bold text-md capitalize text-center">
-            {info.getValue()}
-          </div>
-        ),
-        header: () => <div className="text-center">Payment ID</div>,
-      }),
       columnHelper.accessor("amount", {
         cell: info => (
           <div className="min-w-[13rem] font-bold text-md capitalize text-center">
@@ -87,8 +79,7 @@ export const TableUserWithdraw = () => {
 
     return withdrawals.map(item => ({
       txhash: item.txHash || "",
-      txnId: item.txnId || "",
-      amount: Number(item.value) || 0,
+      amount: Number(item.valueToken) || 0,
       status: item.status || "",
       reference: item.reference || "",
       transactionDate: item.createdAt
@@ -112,6 +103,8 @@ export const TableUserWithdraw = () => {
   return (
     <div className="p-5 space-y-4">
       <div>
+      {/* eslint-disable-next-line */}
+      {/* @ts-expect-error */}
         <Table data={currentItems} columns={columns} />
       </div>
 
