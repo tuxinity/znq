@@ -2,26 +2,16 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, DollarSign, ShieldCheck } from "lucide-react";
 import { useCurrentUser } from "@/hooks/useCurrentUser";
 import { UserRole } from "@prisma/client";
+import { NAV_ITEMS } from "@/constant/navItems";
 
-const navItems = [
-  { name: "Dashboard", href: "/dashboard", icon: Home },
-  { name: "Withdraw", href: "/dashboard/withdraw", icon: DollarSign },
-  {
-    name: "Admin",
-    href: "/dashboard/admin",
-    icon: ShieldCheck,
-    adminOnly: true,
-  },
-];
 
 export function DashboardSidebar() {
   const pathname = usePathname();
   const { user } = useCurrentUser();
 
-  const filteredNavItems = navItems.filter(
+  const filteredNavItems = NAV_ITEMS.filter(
     item => !item.adminOnly || user?.role === UserRole.ADMIN
   );
 
