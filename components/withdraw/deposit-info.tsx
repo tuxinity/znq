@@ -23,22 +23,16 @@ import {toast} from "sonner";
 export function DepositInfo() {
   const { user } = useCurrentUser();
   const [amount, setAmount] = useState("");
-  const { tokenPrice, error, isLoading, buyError } = useTokenPurchase();
+  const { error, isLoading, buyError } = useTokenPurchase();
   const { postWithdrawal, error: withdrawError, success, loading, refetch } =
     useTransactions();
-
-  const calculateTokenAmount = () => {
-    if (!amount || !tokenPrice) return "0";
-
-    return (Number(amount) * tokenPrice).toFixed(6);
-  };
 
   const formatAddress = (addr: string) => {
     return `${addr.slice(0, 6)}...${addr.slice(-4)}`;
   };
 
   useEffect(() => {
-    if (success) {
+    if (success === true) {
       refetch();
       setAmount("");
       toast.success("Withdraw Requested!")
@@ -104,11 +98,6 @@ export function DepositInfo() {
               {buyError && (
                 <p className="text-xs sm:text-sm text-destructive">
                   {buyError}
-                </p>
-              )}
-              {tokenPrice && amount && (
-                <p className="text-xs sm:text-sm text-muted-foreground text-white">
-                  ≈ {calculateTokenAmount()} ZENQ
                 </p>
               )}
             </div>
