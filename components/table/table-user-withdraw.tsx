@@ -12,6 +12,7 @@ import {
   TransactionProvider,
   useTransactions,
 } from "@/context/TransactionContext";
+import { TransactionStatus } from "@prisma/client";
 
 export interface IUserTransaction {
   txhash: string;
@@ -55,8 +56,7 @@ export const TableUserWithdraw = () => {
       }),
       columnHelper.accessor("status", {
         cell: info => {
-          const txnId = info.row.original.txnId;
-          return <TransactionStatusCell txnId={txnId} />;
+          return <TransactionStatusCell statusText={info?.getValue()} />;
         },
         header: () => <div className="text-center">Status</div>,
       }),
@@ -120,26 +120,17 @@ export const TableUserWithdraw = () => {
   );
 };
 
-const TransactionStatusCell = ({ txnId }: { txnId: string }) => {
-  const { statusText, error, signal } = usePaymentStatus(txnId);
-
-  if (error) {
-    return <div className="text-red-500 text-center">Error: {error}</div>;
-  }
+const TransactionStatusCell = ({ statusText }: { statusText: string }) => {
 
   return (
     <div className="min-w-[13rem] font-bold text-md capitalize text-center">
-      {statusText ? (
-        <Badge
-          variant={
-            signal < 0 ? "destructive" : signal === 0 ? "warning" : "success"
-          }
-        >
-          {statusText}
-        </Badge>
-      ) : (
-        <div className="text-gray-500">Loading...</div>
-      )}
+      <Badge
+        variant={
+          statusText === TransactionStatus.REJECTED ? "destructive" : statusText === TransactionStatus.PENDING ? "warning" : "success"
+        }
+      >
+        {statusText}
+      </Badge>
     </div>
   );
 };
