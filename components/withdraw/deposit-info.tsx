@@ -1,6 +1,6 @@
 "use client";
 
-import { DollarSign, Wallet } from "lucide-react";
+import { Wallet } from "lucide-react";
 import { UserBalanceCard } from "../card";
 import { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";

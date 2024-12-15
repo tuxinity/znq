@@ -115,7 +115,7 @@ export function UserBalanceCard() {
 
               <p className="text-xs sm:text-sm text-muted-foreground">
                 {user?.role === "ADMIN" ?
-                  "Total ZENQ Omzet"
+                  "Total ZENQ User"
                   :
                   "ZENQ Balance"
                 }
