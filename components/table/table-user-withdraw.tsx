@@ -7,7 +7,6 @@ import Link from "next/link";
 import Table from "../ui/table";
 import { Badge } from "../ui/badge";
 import Pagination from "../pagination";
-import { usePaymentStatus } from "@/hooks/usePaymentStatus";
 import {
   TransactionProvider,
   useTransactions,
