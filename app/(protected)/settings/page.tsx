@@ -45,8 +45,6 @@ const SettingsPage = () => {
     defaultValues: {
       name: user?.name ?? "",
       email: user?.email ?? "",
-      password: "",
-      newPassword: "",
       role: user?.role ?? UserRole.USER,
       isTwoFactorEnabled: user?.isTwoFactorEnabled ?? false,
     },
@@ -55,6 +53,31 @@ const SettingsPage = () => {
   const onSubmit = (values: z.infer<typeof SettingsSchema>) => {
     startTransition(() => {
       settings(values)
+        .then(data => {
+          if (data.error) {
+            setError(data.error);
+          }
+          if (data.success) {
+            update();
+            setSuccess(data.success);
+          }
+        })
+        .catch(() => setError("Something went wrong!"));
+    });
+  };
+
+  // For testing purpose
+  const submit = () => {
+    const defaultValues = {
+      name: user?.name ?? "",
+      email: user?.email ?? "",
+      role: user?.role ?? UserRole.USER,
+      isTwoFactorEnabled: user?.isTwoFactorEnabled ?? false,
+    }
+    const values = form.getValues();
+
+    startTransition(() => {
+      settings({ ...defaultValues, ...values })
         .then(data => {
           if (data.error) {
             setError(data.error);
@@ -212,6 +235,10 @@ const SettingsPage = () => {
               Save
             </Button>
           </form>
+
+          <button onClick={submit}>
+            save
+          </button>
         </Form>
       </CardContent>
     </Card>

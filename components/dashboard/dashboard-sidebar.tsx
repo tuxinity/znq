@@ -5,15 +5,22 @@ import { usePathname } from "next/navigation";
 import { useCurrentUser } from "@/hooks/useCurrentUser";
 import { UserRole } from "@prisma/client";
 import { NAV_ITEMS } from "@/constant/navItems";
+import { useMemo } from "react";
 
 
 export function DashboardSidebar() {
   const pathname = usePathname();
   const { user } = useCurrentUser();
 
-  const filteredNavItems = NAV_ITEMS.filter(
-    item => !item.adminOnly || user?.role === UserRole.ADMIN
-  );
+  const filteredNavItems = useMemo(() => {
+    if (!user) return [];
+
+    return NAV_ITEMS.filter(
+      item => {
+        if (user?.role === UserRole.ADMIN) return item.adminOnly;
+        else { return !item.adminOnly; }
+      })
+  }, [user]);
 
   return (
     <nav className="flex flex-col space-y-2 w-full">
