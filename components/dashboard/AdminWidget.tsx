@@ -30,7 +30,7 @@ export function AdminWidget() {
         {isLoading ? (
           <Skeleton className="h-9 w-full bg-gray-400" />
         ) : error ? (
-          <p className="text-xs sm:text-sm text-destructive">{error}</p>
+          <p className="w-full text-xs sm:text-sm text-destructive">{error}</p>
         ) : (
           <div className="flex flex-col w-full">
             <h2 className="text-2xl table-cell font-bold mb-3">ZENQ Token Price</h2>
