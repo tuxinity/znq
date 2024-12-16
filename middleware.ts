@@ -47,6 +47,11 @@ export default auth(req => {
     );
   }
 
+  // Prevent Admin access User Pages
+  if (nextUrl.pathname === "/dashboard" || nextUrl.pathname === "/dashboard/withdraw") {
+    return NextResponse.redirect(new URL("/dashboard/admin", req.url));
+  }
+
   if (nextUrl.pathname === "/dashboard/admin") {
     if (!isLoggedIn) {
       return NextResponse.redirect(new URL("/auth/login", nextUrl));

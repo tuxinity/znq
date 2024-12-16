@@ -26,7 +26,7 @@ export function DepositInfo() {
   const { error, isLoading, buyError } = useTokenPurchase();
   const { postWithdrawal, error: withdrawError, success, loading, refetch } =
     useTransactions();
-  
+
 
   const formatAddress = (addr: string) => {
     return `${addr.slice(0, 6)}...${addr.slice(-4)}`;
@@ -43,7 +43,7 @@ export function DepositInfo() {
       toast.error(withdrawError || "Error occurred");
     }
   }, [withdrawError, success]);
-  
+
 
   return (
     <div className="mx-auto p-4 sm:p-6 md:p-5 mt-4 sm:mt-6 md:mt-10">
@@ -92,7 +92,7 @@ export function DepositInfo() {
                         setAmount(inputValue);
                       }
                     }}
-                    className="pr-12 text-xs sm:text-sm"
+                    className="pr-16 text-xs sm:text-sm"
                   />
 
                   <span className="absolute right-8 top-0 bottom-1 my-auto text-muted-foreground w-4 h-4 sm:w-5 sm:h-5">ZENQ</span>

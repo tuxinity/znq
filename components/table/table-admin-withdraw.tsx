@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useMemo, useState } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import { createColumnHelper } from "@tanstack/react-table";
 // import Link from "next/link";
 import Table from "../ui/table";
@@ -21,10 +21,10 @@ export const TableAdminWithdraw = () => {
   const { withdrawals, withdraw, fetchById, fetchWithdrawals } = useTransactions();
   const [modalOpen, setModalOpen] = useState<boolean>(false);
 
-  const handleOpenTransaction = async (id: string) => {
+  const handleOpenTransaction = useCallback(async (id: string) => {
     await fetchById(id);
     setModalOpen(true);
-  };
+  }, [fetchById]);
 
   const handleCopy = (item: string) => {
     navigator.clipboard.writeText(item)
@@ -123,7 +123,7 @@ export const TableAdminWithdraw = () => {
       },
       header: () => <div className="text-center">Action</div>,
     }),
-  ], []);
+  ], [handleOpenTransaction]);
 
   const DataTableTransaction = useMemo(() => {
     if (!withdrawals) return [];
@@ -143,7 +143,7 @@ export const TableAdminWithdraw = () => {
       user: item.user ? { email: item.user.email } : undefined,
       action: () => handleOpenTransaction(item.id || ""),
     }));
-  }, [withdrawals]);
+  }, [withdrawals, handleOpenTransaction]);
 
   const itemsPerPage = 10;
   const [currentPage, setCurrentPage] = useState(1);

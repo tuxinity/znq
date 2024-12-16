@@ -8,7 +8,7 @@ import { UserRole } from "@prisma/client";
 import { SettingsSchema } from "@/schemas";
 import { useSession } from "next-auth/react";
 import { settings } from "@/actions/settings";
-import { useState, useTransition } from "react";
+import { useCallback, useState, useTransition } from "react";
 import { Button, Input } from "@/components/ui";
 // import { Switch } from "@/components/ui/switch";
 import { FormError } from "@/components/form-error";
@@ -67,7 +67,7 @@ const SettingsPage = () => {
   };
 
   // For testing purpose
-  const submit = () => {
+  const submit = useCallback(() => {
     const defaultValues = {
       name: user?.name ?? "",
       email: user?.email ?? "",
@@ -89,7 +89,7 @@ const SettingsPage = () => {
         })
         .catch(() => setError("Something went wrong!"));
     });
-  };
+  }, [form, user, update]);
 
   if (!user) {
     return null; // or a loading state
