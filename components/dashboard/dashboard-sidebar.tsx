@@ -8,7 +8,11 @@ import { NAV_ITEMS } from "@/constant/navItems";
 
 export function DashboardSidebar() {
   const pathname = usePathname();
-  const { user } = useCurrentUser();
+  const { user, isLoading } = useCurrentUser();
+
+  if (isLoading) {
+    return null;
+  }
 
   const filteredNavItems = NAV_ITEMS.filter(
     item =>

@@ -89,10 +89,14 @@ export const login = async (values: z.infer<typeof LoginSchema>) => {
   }
 
   try {
+    // Sign in the user with credentials
     await signIn("credentials", {
       email,
       password,
-      redirectTo: DEFAULT_LOGIN_REDIRECT,
+      redirectTo:
+        existingUser.role === "ADMIN"
+          ? "/dashboard/admin"
+          : DEFAULT_LOGIN_REDIRECT,
     });
 
     revalidatePath("/");
