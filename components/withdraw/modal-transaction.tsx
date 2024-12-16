@@ -55,7 +55,7 @@ export const ModalWithdraw = ({ onClose, transaction }: ModalProps) => {
               >
                 Address Wallet
               </label>
-              <span>{transaction?.addressWallet}</span>
+              <span>{transaction?.user?.walletAddress}</span>
             </div>
             <div>
               <label
