@@ -17,7 +17,7 @@ export const ModalWithdraw = ({ onClose, transaction }: ModalProps) => {
         id: transaction.id,
         txHash: transaction.txHash,
         status: transaction.status,
-        value: transaction.value,
+        value: transaction.valueToken,
         createdAt: transaction.createdAt,
       }
       : {},
@@ -73,7 +73,7 @@ export const ModalWithdraw = ({ onClose, transaction }: ModalProps) => {
               >
                 Amount
               </label>
-              <span>{currentTransaction?.value}</span>
+              <span>{currentTransaction?.valueToken}</span>
             </div>
             <div>
               <label
