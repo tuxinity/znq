@@ -16,6 +16,7 @@ export interface IUserTransaction {
   amount: number;
   status: string;
   reference: string;
+  type: string;
 }
 
 const columnHelper = createColumnHelper<IUserTransaction>();
@@ -73,13 +74,17 @@ export const TableUser = () => {
   const DataTableTransaction = useMemo(() => {
     if (!transactions) return [];
 
-    return transactions.map(item => ({
-      txnId: item.txnId || "",
-      amount: item.valueToken || 0,
-      status: item.status || "",
-      reference: item.reference || "",
-      transactionDate: new Date(item.createdAt).toLocaleDateString() || "",
-    }));
+    // Filter only deposit transactions
+    return transactions
+      .filter(item => item.type?.toLowerCase() === "deposit")
+      .map(item => ({
+        txnId: item.txnId || "",
+        amount: item.valueToken || 0,
+        status: item.status || "",
+        reference: item.reference || "",
+        type: item.type || "",
+        transactionDate: new Date(item.createdAt).toLocaleDateString() || "",
+      }));
   }, [transactions]);
 
   const itemsPerPage = 10;
@@ -139,3 +144,5 @@ const TransactionStatusCell = ({ txnId }: { txnId: string }) => {
     </div>
   );
 };
+
+export default TableUser;

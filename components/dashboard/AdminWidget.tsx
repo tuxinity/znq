@@ -1,4 +1,4 @@
-'use client'
+"use client";
 
 import { useTokenPurchase } from "@/hooks/useTokenPurchase";
 import { useTransactions } from "@/hooks/useTransactions";
@@ -15,13 +15,13 @@ export function AdminWidget() {
   const { omzet } = useTransactions();
 
   const price = useMemo(() => {
-    if (!tokenPrice || !prevPrice) return { priceChange: null, percentage: null };
+    if (!tokenPrice || !prevPrice)
+      return { priceChange: null, percentage: null };
 
     const priceChange = tokenPrice - prevPrice;
     const percentage = (priceChange / prevPrice) * 100;
     return { priceChange, percentage };
-  }, [tokenPrice, prevPrice])
-
+  }, [tokenPrice, prevPrice]);
 
   return (
     <div className="p-0 md:p-5 space-y-4">
@@ -32,18 +32,26 @@ export function AdminWidget() {
           <p className="w-full text-xs sm:text-sm text-destructive">{error}</p>
         ) : (
           <div className="flex flex-col w-full">
-            <h2 className="text-2xl table-cell font-bold mb-3">ZENQ Token Price</h2>
+            <h2 className="text-2xl table-cell font-bold mb-3">
+              ZENQ Token Price
+            </h2>
             <div className="flex flex-row gap-2">
               <p
-                className={`text-2xl sm:text-3xl font-bold ${price?.priceChange && price?.priceChange >= 0 ? "text-green-500" : "text-red-500"
-                  }`}
+                className={`text-2xl sm:text-3xl font-bold ${
+                  price?.priceChange && price?.priceChange >= 0
+                    ? "text-green-500"
+                    : "text-red-500"
+                }`}
               >
                 {formatPrice(tokenPrice)}
               </p>
               {price.priceChange !== null && (
                 <div
-                  className={`flex items-center ${price?.priceChange && price?.priceChange >= 0 ? "text-green-500" : "text-red-500"
-                    }`}
+                  className={`flex items-center ${
+                    price?.priceChange && price?.priceChange >= 0
+                      ? "text-green-500"
+                      : "text-red-500"
+                  }`}
                 >
                   {price?.priceChange && price?.priceChange >= 0 ? (
                     <ArrowUpCircle className="w-4 h-4 sm:w-5 sm:h-5 mr-1" />
@@ -56,22 +64,28 @@ export function AdminWidget() {
                 </div>
               )}
             </div>
-            <p className="text-xs sm:text-sm text-muted-foreground">
-              USDT
-            </p>
+            <p className="text-xs sm:text-sm text-muted-foreground">USDT</p>
           </div>
         )}
 
         {/** Total Result */}
         <div className="flex-1 bg-gradient-to-r table from-blue-500 to-purple-600 text-white p-4 rounded-xl">
-          <h2 className="text-md md:text-2xl table-row md:table-cell text-center md:text-left">Total Zenq Turnover</h2>
-          <p className="text-md md:text-2xl font-bold table-row md:table-cell text-center md:text-right">{omzet !== null && !isLoading ? `${omzet} ZENQ` : <BeatLoader />}</p>
+          <h2 className="text-md md:text-2xl table-row md:table-cell text-center md:text-left">
+            Total Turnover
+          </h2>
+          <p className="text-md md:text-2xl font-bold table-row md:table-cell text-center md:text-right">
+            {omzet !== null && !isLoading ? `${omzet} USD` : <BeatLoader />}
+          </p>
         </div>
         <div className="flex-1 bg-gradient-to-r table from-blue-500 to-purple-600 text-white p-4 rounded-xl">
-          <h2 className="text-md md:text-2xl table-row md:table-cell text-center md:text-left">Total User</h2>
-          <p className="text-md md:text-2xl font-bold table-row md:table-cell text-center md:text-right">{totalUser ?? <BeatLoader />}</p>
+          <h2 className="text-md md:text-2xl table-row md:table-cell text-center md:text-left">
+            Total User
+          </h2>
+          <p className="text-md md:text-2xl font-bold table-row md:table-cell text-center md:text-right">
+            {totalUser ?? <BeatLoader />}
+          </p>
         </div>
       </div>
     </div>
-  )
+  );
 }

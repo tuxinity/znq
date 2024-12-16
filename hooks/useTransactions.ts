@@ -1,5 +1,5 @@
-import { useState, useEffect, useCallback } from 'react';
-import { useSession } from 'next-auth/react';
+import { useState, useEffect, useCallback } from "react";
+import { useSession } from "next-auth/react";
 
 export interface Transaction {
   id: string;
@@ -38,40 +38,48 @@ export const useTransactions = (
   const [currentPage, setCurrentPage] = useState<number>(initialPage);
   const [omzet, setOmzet] = useState<number>(0);
 
-  const fetchTransactions = useCallback(async (pageToFetch: number = page) => {
-    if (!session?.user) {
-      setError(new Error('No authenticated user'));
-      setIsLoading(false);
-      return;
-    }
-
-    try {
-      setIsLoading(true);
-      const response = await fetch(`/api/transaction?page=${pageToFetch}&limit=${pageLimit}`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to fetch transactions');
+  const fetchTransactions = useCallback(
+    async (pageToFetch: number = page) => {
+      if (!session?.user) {
+        setError(new Error("No authenticated user"));
+        setIsLoading(false);
+        return;
       }
 
-      const data = await response.json();
-      setTransactions(data.transactions);
-      setTotalPages(data.totalPages);
-      setCurrentPage(data.currentPage);
-      setPage(data.currentPage);
-      setOmzet(data.totalTransactionValue)
-      setError(null);
-    } catch (err) {
-      setError(err instanceof Error ? err : new Error('An unknown error occurred'));
-      setTransactions([]);
-    } finally {
-      setIsLoading(false);
-    }
-  }, [page, pageLimit, session]);
+      try {
+        setIsLoading(true);
+        const response = await fetch(
+          `/api/transaction?page=${pageToFetch}&limit=${pageLimit}`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch transactions");
+        }
+
+        const data = await response.json();
+        setTransactions(data.transactions);
+        setTotalPages(data.totalPages);
+        setCurrentPage(data.currentPage);
+        setPage(data.currentPage);
+        setOmzet(data.totalTransactionValue);
+        setError(null);
+      } catch (err) {
+        setError(
+          err instanceof Error ? err : new Error("An unknown error occurred")
+        );
+        setTransactions([]);
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [page, pageLimit, session]
+  );
 
   useEffect(() => {
     fetchTransactions();

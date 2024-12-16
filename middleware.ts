@@ -1,12 +1,13 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import NextAuth from "next-auth";
-import { getToken } from 'next-auth/jwt';
+import { getToken } from "next-auth/jwt";
 import authConfig from "./auth.config";
 import {
   publicRoutes,
   apiAuthPrefix,
   DEFAULT_LOGIN_REDIRECT,
   authRoutes,
+  DEFAULT_ADMIN_ROUTES,
 } from "@/routes";
 import { NextResponse } from "next/server";
 import { UserRole } from "@prisma/client";
@@ -14,10 +15,10 @@ import { UserRole } from "@prisma/client";
 const { auth } = NextAuth(authConfig);
 
 //@ts-ignore
-export default auth(async (req) => {
+export default auth(async req => {
   const { nextUrl } = req;
   const isLoggedIn = !!req.auth;
-  const user = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
+  const user = await getToken({ req, secret: process.env.AUTH_SECRET });
 
   const isApiAuthRoute = nextUrl.pathname.startsWith(apiAuthPrefix);
   const isPublicRoute = publicRoutes.includes(nextUrl.pathname);
@@ -48,24 +49,19 @@ export default auth(async (req) => {
       new URL(`/auth/login?${encodedCallbackUrl}`, nextUrl)
     );
   }
-  // Prevent User access Admin Pages
-  if (user?.role === UserRole.USER && nextUrl.pathname === "/dashboard/admin") {
+  if (
+    user?.role === UserRole.USER &&
+    nextUrl.pathname === DEFAULT_ADMIN_ROUTES
+  ) {
     return NextResponse.redirect(new URL("/dashboard", req.url));
   }
 
-  // Prevent Admin access User Pages
-  if (user?.role === UserRole.ADMIN && (nextUrl.pathname === "/dashboard" || nextUrl.pathname === "/dashboard/withdraw")) {
-    return NextResponse.redirect(new URL("/dashboard/admin", req.url));
-  }
-
-  if (nextUrl.pathname === "/dashboard/admin") {
-    if (!isLoggedIn) {
-      return NextResponse.redirect(new URL("/auth/login", nextUrl));
-    }
-
-    if (!UserRole.ADMIN) {
-      return NextResponse.redirect(new URL(`/dashboard`, nextUrl));
-    }
+  if (
+    user?.role === UserRole.ADMIN &&
+    (nextUrl.pathname === "/dashboard" ||
+      nextUrl.pathname === "/dashboard/withdraw")
+  ) {
+    return NextResponse.redirect(new URL(DEFAULT_ADMIN_ROUTES, req.url));
   }
 
   return null;

@@ -1,7 +1,7 @@
 import { db } from "@/lib/db";
 import { auth } from "@/auth";
 import { NextRequest, NextResponse } from "next/server";
-import { TransactionType } from "@prisma/client";
+import { TransactionStatus, TransactionType } from "@prisma/client";
 
 export async function GET(request: NextRequest) {
   try {
@@ -14,9 +14,12 @@ export async function GET(request: NextRequest) {
 
     const isAdmin = session.user.role === "ADMIN";
 
-    // Where clause for filtering deposit transactions
-    const depositWhereClause = {
+    const whereClause = {
       userId: session.user.id,
+    };
+
+    const whereClauseCount = {
+      status: TransactionStatus.SUCCESS,
       type: TransactionType.DEPOSIT,
     };
 
@@ -24,26 +27,21 @@ export async function GET(request: NextRequest) {
     const page = parseInt(searchParams.get("page") || "1", 10);
     const limit = parseInt(searchParams.get("limit") || "10", 10);
 
-    // Count total deposit transactions for pagination
-    const totalRecords = await db.transaction.count({
-      where: depositWhereClause,
-    });
+    const totalRecords = await db.transaction.count({ where: whereClause });
 
     const totalPages = Math.ceil(totalRecords / limit);
 
-    // Calculate total transaction value for all deposit transactions
     const totalTransactionValue = isAdmin
       ? await db.transaction.aggregate({
           _sum: {
             value: true,
           },
-          where: depositWhereClause,
+          where: whereClauseCount,
         })
       : null;
 
-    // Fetch deposit transactions with pagination
     const transactions = await db.transaction.findMany({
-      where: depositWhereClause,
+      where: whereClause,
       include: {
         user: {
           select: {
@@ -63,7 +61,7 @@ export async function GET(request: NextRequest) {
       totalPages,
       currentPage: page,
       ...(isAdmin && {
-        totalTransactionValue: totalTransactionValue?._sum.value || 0,
+        totalTransactionValue: totalTransactionValue?._sum.value,
       }),
     });
   } catch (error) {

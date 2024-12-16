@@ -24,9 +24,13 @@ export function DepositInfo() {
   const { user } = useCurrentUser();
   const [amount, setAmount] = useState("");
   const { error, isLoading, buyError } = useTokenPurchase();
-  const { postWithdrawal, error: withdrawError, success, loading, refetch } =
-    useTransactions();
-
+  const {
+    postWithdrawal,
+    error: withdrawError,
+    success,
+    loading,
+    refetch,
+  } = useTransactions();
 
   const formatAddress = (addr: string) => {
     return `${addr.slice(0, 6)}...${addr.slice(-4)}`;
@@ -36,7 +40,7 @@ export function DepositInfo() {
     if (success === true) {
       refetch();
       setAmount("");
-      toast.success("Withdraw Requested!")
+      toast.success("Withdraw Requested!");
     }
     if (withdrawError !== null) {
       setAmount("");
@@ -44,12 +48,11 @@ export function DepositInfo() {
     }
   }, [withdrawError, success]);
 
-
   return (
     <div className="mx-auto p-4 sm:p-6 md:p-5 mt-4 sm:mt-6 md:mt-10">
       <div className="grid gap-4 sm:gap-5 md:gap-6 grid-cols-1 md:grid-cols-3">
         <UserBalanceCard />
-        {user?.role === "ADMIN" ? null :
+        {user?.role === "ADMIN" ? null : (
           <Card className="md:col-span-2 bg-slate-800 text-white border-gray-700 w-full">
             <CardHeader>
               <CardTitle className="text-lg sm:text-2xl font-bold">
@@ -78,7 +81,7 @@ export function DepositInfo() {
                     </div>
                   )}
                   <div className="text-sm font-medium text-muted-foreground mb-1">
-                    Wallet Address
+                    Wallet Address BEP20
                   </div>
                 </div>
                 <div className="relative">
@@ -95,7 +98,9 @@ export function DepositInfo() {
                     className="pr-16 text-xs sm:text-sm"
                   />
 
-                  <span className="absolute right-8 top-0 bottom-1 my-auto text-muted-foreground w-4 h-4 sm:w-5 sm:h-5">ZENQ</span>
+                  <span className="absolute right-8 top-0 bottom-1 my-auto text-muted-foreground w-4 h-4 sm:w-5 sm:h-5">
+                    ZENQ
+                  </span>
                 </div>
                 {buyError && (
                   <p className="text-xs sm:text-sm text-destructive">
@@ -120,7 +125,7 @@ export function DepositInfo() {
               </Button>
             </CardFooter>
           </Card>
-        }
+        )}
       </div>
     </div>
   );

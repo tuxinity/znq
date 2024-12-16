@@ -20,7 +20,7 @@ export const authRoutes = [
   "/auth/new-password",
 ];
 
-export const adminRoutes = ["/dashboard/admin"];
+export const DEFAULT_ADMIN_ROUTES = "/dashboard/admin";
 
 /**
  * The prefix for Api authentication routes
