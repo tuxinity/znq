@@ -7,8 +7,8 @@ import Table from "../ui/table";
 import Pagination from "../pagination";
 import { TransactionProvider, useTransactions } from "@/context/TransactionContext";
 import { ModalWithdraw } from "../withdraw/modal-transaction";
-import { Input } from "../ui";
-import { Search } from "lucide-react";
+// import { Input } from "../ui";
+// import { Search } from "lucide-react";
 import { IUserTransaction } from "@/constant/userTransaction";
 import { toast } from "sonner";
 import { Copy } from "lucide-react";
@@ -158,10 +158,10 @@ export const TableAdminWithdraw = () => {
   };
 
   return (
-    <div className="p-5 space-y-4">
+    <div className="p-0 md:p-5 space-y-4">
       <div className="flex flex-row gap-5 justify-between ps-1.5 my-4">
         <h2 className="text-white text-2xl font-bold">Withdrawals Request</h2>
-        <div className="relative sm:block">
+        {/* <div className="relative sm:block">
           <Search className="absolute top-5 -translate-y-1/2 start-3 text-black dark:text-white" />
           <Input
             type="text"
@@ -170,7 +170,7 @@ export const TableAdminWithdraw = () => {
             placeholder="Search..."
             className="min-h-10 w-56 ps-9 px-3 h-8 bg-transparent dark:bg-slate-900 dark:text-slate-200 rounded-md outline-none border border-gray-100 dark:border-gray-800 focus:ring-0 bg-white text-black shadow-md"
           />
-        </div>
+        </div> */}
       </div>
       <div>
 

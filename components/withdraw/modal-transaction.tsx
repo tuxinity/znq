@@ -12,28 +12,19 @@ type ModalProps = {
 export const ModalWithdraw = ({ onClose, transaction }: ModalProps) => {
   const { approveWithdrawal } = usePostWithdrawal();
   const { register, handleSubmit, formState: { errors } } = useForm<IUserTransaction>({
-    defaultValues: transaction
-      ? {
-        id: transaction.id,
-        txHash: transaction.txHash,
-        status: transaction.status,
-        value: transaction.valueToken,
-        createdAt: transaction.createdAt,
-      }
-      : {},
+    defaultValues: {
+      txHash: transaction.txHash
+    }
   });
 
   const onSubmit = async (data: Partial<IUserTransaction>) => {
     try {
-      await approveWithdrawal(currentTransaction?.id as string, data.txHash as string);
+      await approveWithdrawal(transaction?.id as string, data.txHash as string);
       onClose();
     } catch (error) {
       console.error("Update failed", error);
     }
   };
-
-  const currentTransaction = transaction;
-
 
   return (
     <Dialog open={true} onOpenChange={(open) => !open && onClose()}>
@@ -55,7 +46,7 @@ export const ModalWithdraw = ({ onClose, transaction }: ModalProps) => {
               >
                 Transaction ID
               </label>
-              <span>{currentTransaction?.id}</span>
+              <span>{transaction?.id}</span>
             </div>
             <div>
               <label
@@ -64,7 +55,7 @@ export const ModalWithdraw = ({ onClose, transaction }: ModalProps) => {
               >
                 Address Wallet
               </label>
-              <span>{currentTransaction?.addressWallet}</span>
+              <span>{transaction?.addressWallet}</span>
             </div>
             <div>
               <label
@@ -73,7 +64,7 @@ export const ModalWithdraw = ({ onClose, transaction }: ModalProps) => {
               >
                 Amount
               </label>
-              <span>{currentTransaction?.valueToken}</span>
+              <span>{transaction?.valueToken}</span>
             </div>
             <div>
               <label
@@ -82,7 +73,7 @@ export const ModalWithdraw = ({ onClose, transaction }: ModalProps) => {
               >
                 Status
               </label>
-              <span>{currentTransaction?.status}</span>
+              <span>{transaction?.status}</span>
             </div>
             <div>
               <label
@@ -92,8 +83,8 @@ export const ModalWithdraw = ({ onClose, transaction }: ModalProps) => {
                 Created At
               </label>
               <span>{
-                currentTransaction?.createdAt
-                  ? new Date(currentTransaction.createdAt).toLocaleDateString()
+                transaction?.createdAt
+                  ? new Date(transaction.createdAt).toLocaleDateString()
                   : ""
               }</span>
             </div>
