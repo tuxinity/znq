@@ -1,5 +1,6 @@
 export interface IUserTransaction {
     value: string;
+    valueToken: string;
     id: string;
     txnId: string;
     txHash?: string; 

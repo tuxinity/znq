@@ -12,6 +12,7 @@ import { Search } from "lucide-react";
 import { IUserTransaction } from "@/constant/userTransaction";
 import { toast } from "sonner";
 import { Copy } from "lucide-react";
+import { Badge } from "../ui/badge";
 
 
 const columnHelper = createColumnHelper<IUserTransaction>();
@@ -103,7 +104,7 @@ export const TableAdminWithdraw = () => {
     columnHelper.accessor("status", {
       cell: info => (
         <div className="min-w-[13rem] font-bold text-md capitalize text-center">
-          {info.getValue()}
+          <TransactionStatusCell statusText={info?.getValue()} />
         </div>
       ),
       header: () => <div className="text-center">Status</div>,
@@ -132,8 +133,8 @@ export const TableAdminWithdraw = () => {
       addressWallet: item.user?.walletAddress,
       txHash: item.txHash || "",
       email: item.user?.email || "N/A",
-      value: item.value || "",
-      amount: typeof item.value === "number" ? item.value : 0,
+      value: item.valueToken || "",
+      amount: typeof item.valueToken === "number" ? item.valueToken : 0,
       status: item.status || "",
       reference: item.reference || "",
       transactionDate: item.createdAt
@@ -195,6 +196,21 @@ export const TableAdminWithdraw = () => {
         // @ts-expect-error
         <ModalWithdraw onClose={async () => { setModalOpen(false); await fetchWithdrawals(); }} transaction={withdraw} />
       )}
+    </div>
+  );
+};
+
+const TransactionStatusCell = ({ statusText }: { statusText: string }) => {
+
+  return (
+    <div className="min-w-[13rem] font-bold text-md capitalize text-center">
+      <Badge
+        variant={
+          statusText === "PENDING" ? "warning" : "success"
+        }
+      >
+        {statusText}
+      </Badge>
     </div>
   );
 };
