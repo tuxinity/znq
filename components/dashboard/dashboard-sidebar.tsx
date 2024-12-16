@@ -7,10 +7,13 @@ import { UserRole } from "@prisma/client";
 import { NAV_ITEMS } from "@/constant/navItems";
 import { useMemo } from "react";
 
-
 export function DashboardSidebar() {
   const pathname = usePathname();
-  const { user } = useCurrentUser();
+  const { user, isLoading } = useCurrentUser();
+
+  if (isLoading) {
+    return null;
+  }
 
   const filteredNavItems = useMemo(() => {
     if (!user) return [];
@@ -33,7 +36,7 @@ export function DashboardSidebar() {
             className={`
               flex items-center space-x-2 px-4 py-2 rounded-lg 
               hover:bg-white hover:text-blue-900 
-              ${isActive ? "text-blue-500 font-bold !important" : "text-white"}
+              ${isActive ? "text-blue-500 font-bold" : "text-white"}
             `}
           >
             <item.icon

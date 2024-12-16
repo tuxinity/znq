@@ -1,7 +1,7 @@
 import { db } from "@/lib/db";
 import { auth } from "@/auth";
 import { NextRequest, NextResponse } from "next/server";
-import { TransactionStatus, TransactionType } from "@prisma/client";
+import { TransactionType } from "@prisma/client";
 
 export async function GET(request: NextRequest) {
   try {
@@ -14,12 +14,9 @@ export async function GET(request: NextRequest) {
 
     const isAdmin = session.user.role === "ADMIN";
 
-    const whereClause = {
+    // Where clause for filtering deposit transactions
+    const depositWhereClause = {
       userId: session.user.id,
-    };
-
-    const whereClauseCount = {
-      status: TransactionStatus.SUCCESS,
       type: TransactionType.DEPOSIT,
     };
 
@@ -27,21 +24,26 @@ export async function GET(request: NextRequest) {
     const page = parseInt(searchParams.get("page") || "1", 10);
     const limit = parseInt(searchParams.get("limit") || "10", 10);
 
-    const totalRecords = await db.transaction.count({ where: whereClause });
+    // Count total deposit transactions for pagination
+    const totalRecords = await db.transaction.count({
+      where: depositWhereClause,
+    });
 
     const totalPages = Math.ceil(totalRecords / limit);
 
+    // Calculate total transaction value for all deposit transactions
     const totalTransactionValue = isAdmin
       ? await db.transaction.aggregate({
           _sum: {
             value: true,
           },
-          where: whereClauseCount,
+          where: depositWhereClause,
         })
       : null;
 
+    // Fetch deposit transactions with pagination
     const transactions = await db.transaction.findMany({
-      where: whereClause,
+      where: depositWhereClause,
       include: {
         user: {
           select: {
@@ -60,7 +62,9 @@ export async function GET(request: NextRequest) {
       transactions,
       totalPages,
       currentPage: page,
-      ...(isAdmin && { totalTransactionValue: totalTransactionValue?._sum.value }), 
+      ...(isAdmin && {
+        totalTransactionValue: totalTransactionValue?._sum.value || 0,
+      }),
     });
   } catch (error) {
     console.error("Transactions Route Error:", error);
