@@ -1,6 +1,7 @@
 import { db } from '@/lib/db';
 import { auth } from "@/auth";
 import { NextResponse } from 'next/server';
+import { TransactionStatus } from '@prisma/client';
 
 export async function GET() {
   try {
@@ -24,10 +25,10 @@ export async function GET() {
     });
 
     const balances = transactions.reduce((acc, txn) => {
-      if (txn.type === "DEPOSIT" && txn.status === 'SUCCESS') {
+      if (txn.type === "DEPOSIT" && txn.status === TransactionStatus.SUCCESS) {
         acc.totalValue += txn.value;
         acc.totalValueToken += txn.valueToken;
-      } else if (txn.type === "WITHDRAW" && txn.status === 'SUCCESS') {
+      } else if (txn.type === "WITHDRAW" && txn.status !== TransactionStatus.REJECTED) {
         acc.totalValue -= txn.value;
         acc.totalValueToken -= txn.valueToken;
       }
