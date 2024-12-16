@@ -66,7 +66,7 @@ export function AdminWidget() {
         {/** Total Result */}
         <div className="flex-1 bg-gradient-to-r table from-blue-500 to-purple-600 text-white p-4 rounded-xl">
           <h2 className="text-md md:text-2xl table-row md:table-cell">Total Zenq Turnover</h2>
-          <p className="text-2xl font-bold table-row md:table-cell text-center md:text-right">{omzet ? `$${omzet}` : <BeatLoader />}</p>
+          <p className="text-2xl font-bold table-row md:table-cell text-center md:text-right">{omzet !== null ? `${omzet} ZENQ` : <BeatLoader />}</p>
         </div>
         <div className="flex-1 bg-gradient-to-r table from-blue-500 to-purple-600 text-white p-4 rounded-xl">
           <h2 className="text-md md:text-2xl table-row md:table-cell">Total User</h2>
