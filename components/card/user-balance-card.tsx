@@ -12,14 +12,10 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { useTransactions } from "@/hooks/useTransactions";
-import { useCurrentUser } from "@/hooks/useCurrentUser";
 
 export function UserBalanceCard() {
-  const { user } = useCurrentUser();
   const { isLoading: balancesLoading, balances } = useBalances();
   const { tokenPrice, error, prevPrice, isLoading } = useTokenPurchase();
-  const { omzet } = useTransactions();
 
   const priceChange =
     tokenPrice !== null && prevPrice !== null ? tokenPrice - prevPrice : null;
@@ -94,13 +90,13 @@ export function UserBalanceCard() {
         )}
         <div className="flex items-center justify-between ">
           <div className="flex flex-row space-x-2 sm:space-x-4 item-center">
-            <div className="relative w-8 h-8 sm:w-12 sm:h-12">
+            <div className="relative w-8 sm:w-12 sm:h-12">
               <Image
                 src="/zenq.svg"
                 alt="ZENQ token"
                 fill
                 sizes="(max-width: 640px) 32px, 48px"
-                className="object-contain mt-5"
+                className="object-contain"
                 priority
               />
             </div>
@@ -109,9 +105,7 @@ export function UserBalanceCard() {
                 <Skeleton className="h-9 w-[120px] bg-gray-400" />
               ) : (
                 <p className="text-xl sm:text-2xl font-bold">
-                  {user?.role === "ADMIN"
-                    ? formatPrice(omzet ?? 0)
-                    : formatPrice(balances?.totalValueToken ?? 0)}
+                  {formatPrice(balances?.totalValueToken ?? 0)}
                 </p>
               )}
               <p className="text-xs sm:text-sm text-muted-foreground text-white">
