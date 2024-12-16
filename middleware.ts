@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import NextAuth from "next-auth";
+import { getToken } from 'next-auth/jwt';
 import authConfig from "./auth.config";
 import {
   publicRoutes,
@@ -13,10 +14,10 @@ import { UserRole } from "@prisma/client";
 const { auth } = NextAuth(authConfig);
 
 //@ts-ignore
-export default auth(req => {
+export default auth(async (req) => {
   const { nextUrl } = req;
   const isLoggedIn = !!req.auth;
-  // const userRole = req.auth?.user.role;
+  const user = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
 
   const isApiAuthRoute = nextUrl.pathname.startsWith(apiAuthPrefix);
   const isPublicRoute = publicRoutes.includes(nextUrl.pathname);
@@ -47,11 +48,15 @@ export default auth(req => {
       new URL(`/auth/login?${encodedCallbackUrl}`, nextUrl)
     );
   }
+  // Prevent User access Admin Pages
+  if (user?.role === UserRole.USER && nextUrl.pathname === "/dashboard/admin") {
+    return NextResponse.redirect(new URL("/dashboard", req.url));
+  }
 
   // Prevent Admin access User Pages
-  // if (userRole === UserRole.ADMIN && (nextUrl.pathname === "/dashboard" || nextUrl.pathname === "/dashboard/withdraw")) {
-  //   return NextResponse.redirect(new URL("/dashboard/admin", req.url));
-  // }
+  if (user?.role === UserRole.ADMIN && (nextUrl.pathname === "/dashboard" || nextUrl.pathname === "/dashboard/withdraw")) {
+    return NextResponse.redirect(new URL("/dashboard/admin", req.url));
+  }
 
   if (nextUrl.pathname === "/dashboard/admin") {
     if (!isLoggedIn) {
