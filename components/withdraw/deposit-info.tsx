@@ -46,7 +46,7 @@ export function DepositInfo() {
       setAmount("");
       toast.error(withdrawError || "Error occurred");
     }
-  }, [withdrawError, success]);
+  }, [withdrawError, success, refetch]);
 
   return (
     <div className="mx-auto p-4 sm:p-6 md:p-5 mt-4 sm:mt-6 md:mt-10">
