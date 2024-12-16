@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useSession } from 'next-auth/react';
 
 export interface Transaction {
@@ -38,7 +38,7 @@ export const useTransactions = (
   const [currentPage, setCurrentPage] = useState<number>(initialPage);
   const [omzet, setOmzet] = useState<number>(0);
 
-  const fetchTransactions = async (pageToFetch: number = page) => {
+  const fetchTransactions = useCallback(async (pageToFetch: number = page) => {
     if (!session?.user) {
       setError(new Error('No authenticated user'));
       setIsLoading(false);
@@ -71,11 +71,11 @@ export const useTransactions = (
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [page, pageLimit, session]);
 
   useEffect(() => {
     fetchTransactions();
-  }, [session?.user, page]);
+  }, [session?.user, page, fetchTransactions]);
 
   const refetch = (pageNumber?: number) => {
     if (pageNumber) {
